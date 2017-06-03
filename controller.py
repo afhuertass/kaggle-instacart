@@ -30,12 +30,15 @@ class RnnInstacart(snt.AbstractModule ):
         self.depth = depth
         self.use_skip_connections =  use_skip_connections
         self.use_dynamic = use_dynamic
-        self.output_size = output_size 
+        
+        self._output_size = output_size 
         super(RnnInstacart, self).__init__(name)
-
+        print("wtf")
+        print(num_hidden)
+        print(depth)
         with self._enter_variable_scope():
             # layer of lstm units
-            self._output_module = snt.Linear( self.output_size , name = "output" )
+            self._output_module = snt.Linear( self._output_size , name = "output" )
             self._lstms = [ snt.LSTM( num_hidden , name="lstm_{}".format(i) ) for i in range(depth )  ]
 
             self._core = snt.DeepRNN( self._lstms , skip_connections = self.use_skip_connections , name = "deep_lstm"
@@ -53,11 +56,11 @@ class RnnInstacart(snt.AbstractModule ):
         # input_sequence [ LEN , batch_size , output_size ]
         input_shape = inputs_sequence.get_shape()
         
-        batch_size =  input_shape[1]
+        batch_size =  input_shape[0]
         
         initial_state = self._core.initial_state( batch_size )
-
-
+        print( "controller shape ")
+        print( inputs_sequence.shape )
         output_seq , final_state = self._core(inputs_sequence , initial_state )
 
         """
@@ -78,10 +81,18 @@ class RnnInstacart(snt.AbstractModule ):
             output_seq = tf.stack( output )
 
         # return the output_seq, and final_sate
-        """
+        
         batch_output_seq_m = snt.BatchApply(self._output_module )
 
         output_seq = batch_output_seq_m( output_seq )
+        """
+        print(output_seq.shape )
+        
+       
+        output_seq = snt.Linear( self._output_size , name="output_linear" )( output_seq )
+        
+        
+        print(output_seq.shape )
         return output_seq , final_state
     
         
@@ -89,3 +100,10 @@ class RnnInstacart(snt.AbstractModule ):
 
         return self._core.initial_state(batch_size )
         
+    @property
+    def state_size(self):
+        return self._core.state_size
+
+    @property
+    def output_size(self):
+        return self._core._output_size

@@ -16,7 +16,7 @@ def main(unused_args):
     }
     dnc1 = dnc.DNC( access_config = access_config , controller_config = controller_config )
 
-    initial_state = dnc1.initial_state() # check if method is
+   
     
     # [LEN , Batch_size, feats ]
     batch_size = 2 
@@ -24,13 +24,22 @@ def main(unused_args):
     seq_len = tf.constant( 10 ,  shape=[ batch_size ]  , dtype= tf.int32 )
     rn = tf.random_normal( shape_sample )
 
-    rr = dnc1( rn , None ) # model build
+    initial_state = dnc1.initial_state( batch_size )
     
     init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
+
+    print("test shape")
+    print( rn.shape )
+    output_seq , _ = tf.nn.dynamic_rnn(
+        cell = dnc1 ,
+        inputs = rn ,
+        time_major = True,
+        initial_state = initial_state 
+    )
+   
     
-    
-    
-    last_rnn = tf.gather( rr[0] , int( rn[0].get_shape()[0] -1  )  )
+    """
+    last_rnn = tf.gather( output_seq , int( output_seq.get_shape()[0] -1  )  )
     
     with tf.Session() as sess:
         sess.run( init_op )
@@ -45,7 +54,8 @@ def main(unused_args):
         
     print("todo bien")
     return ""
-
+    """
+    
 if __name__ =="__main__":
 
     tf.app.run()

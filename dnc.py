@@ -14,12 +14,18 @@ class DNC( snt.RNNCore ):
     def __init__(self , access_config , controller_config , name = "my-dnc" ):
 
 
-        super(DNC , self).__init__(name)
+        super(DNC , self).__init__( name)
         # create the controller
         self._controller = contr.RnnInstacart(**controller_config )
+
         
-    
-            
+        #self._output_size = tf.TensorShape([output_size])
+        self._state_size =  DNCState(
+        access_output=tf.random_normal([1]) ,
+        access_state=tf.random_normal([1]) ,
+        controller_state=  self._controller.state_size 
+        )
+        
         return
 
     def _build(self , inputs , prev_state ):
@@ -36,6 +42,8 @@ class DNC( snt.RNNCore ):
         
         controller_input = tf.concat([batch_flatten( inputs ) , batch_flatten(  prev_access_output    )] , 1 )
         """
+        print("dnc shape")
+        print( inputs.shape )
         controller_output , controller_state = self._controller( inputs   )
 
 
@@ -51,8 +59,14 @@ class DNC( snt.RNNCore ):
 
         return DNCState(
             controller_state = self._controller.initial_state(batch_size) ,
-            access_sate = 'TODO' ,
-            access_output = 'TODO'
+            access_state =  tf.random_normal([1]) ,
+            access_output = tf.random_normal([1])
         )
 
-    
+    @property
+    def state_size(self):
+        return self._state_size
+
+    @property
+    def output_size(self):
+        return self._controller._output_size
