@@ -9,7 +9,7 @@ OUTPUT_SIZE = 49690
 BATCH_SIZE = 2
 PATH_PRODUCTS = "../data/csvs/products.csv"
 PATH_TRAIN_DATA = [ "../data/train.pb2" ]
-PATH_TEST_DATA = ["../data/test.pb2"]
+PATH_TEST_DATA = ["../data/train.pb2"]
 
 NUM_ITER = 1000
 REP_INTERVAL = 100
@@ -48,11 +48,11 @@ def run_model( inputs_sequence , output_size ):
 
 def train( num_epochs , rep_interval):
 
-    input_data = input_manager.DataInstacart( PATH_PRODUCTS, BATCH_SIZE , num_epochs )
+    input_data = input_manager.DataInstacart( PATH_PRODUCTS, BATCH_SIZE  )
 
-    input_tensors = input_data(PATH_TRAIN_DATA)
+    input_tensors = input_data(PATH_TRAIN_DATA , num_epochs )
 
-    input_tensors_test = input_data(PATH_TEST_DATA)
+    #input_tensors_test = input_data(PATH_TEST_DATA , 1 ) # una sola pasada 
     # tuple
     output_sequence = run_model(input_tensors[0], OUTPUT_SIZE )
 
@@ -102,17 +102,38 @@ def train( num_epochs , rep_interval):
     else:
         hooks = []
 
+    init_op = tf.local_variables_initializer()
+    
     with tf.train.SingularMonitoredSession( hooks = hooks , checkpoint_dir = CHECK_DIR ) as sess:
 
-        start_iteration = sess.run(global_step)
-        total_loss = 0
-        
-        for train_iteration in xrange(start_iteration , num_epochs):
-            print(train_iteration)
-            _ , loss = sess.run( [ train_step , train_loss] )
 
-            total_loss  += loss
+        sess.run( init_op )
+        coord = tf.train.Coordinator()
+        threads = tf.train.start_queue_runners( sess = sess , coord = coord )
+       
+        start_iteration = sess.run(global_step)
+        
+        total_loss = 0
+
+        try :
+            for train_iteration in xrange(start_iteration , num_epochs):
+                if coord.should_stop():
+                    break
+                print(train_iteration)
+                #_ , loss = sess.run( [ train_step , train_loss] )
             
+                #total_loss  += loss
+                
+        except Exception, e:
+            print("some shit happen")
+            coord.request_stop(e)
+        finally:
+            coord.request_stop()
+            coord.join(threads)
+            
+
+        
+        
 def main( unuser_args):
 
     train(NUM_ITER , REP_INTERVAL)
