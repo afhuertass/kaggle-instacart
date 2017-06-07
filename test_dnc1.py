@@ -12,9 +12,14 @@ def main(unused_args):
         'output_size' : 50
     }
     access_config = {
-        'none' : 'none' , 
+        'memory_size' : 128 , 
+        'num_writes' : 1 ,
+        'num_reads' : 1 ,
+        'w_size' : 20 ,
+        
     }
-    dnc1 = dnc.DNC( access_config = access_config , controller_config = controller_config )
+    OUTPUT_SIZE = 10
+    dnc1 = dnc.DNC( access_config = access_config , controller_config = controller_config ,  output_size = OUTPUT_SIZE )
 
    
     
@@ -26,8 +31,8 @@ def main(unused_args):
 
     initial_state = dnc1.initial_state( batch_size )
     
-    init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
-
+    
+    
     print("test shape")
     print( rn.shape )
     output_seq , _ = tf.nn.dynamic_rnn(
@@ -36,7 +41,12 @@ def main(unused_args):
         time_major = True,
         initial_state = initial_state 
     )
-   
+    
+    init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
+    with tf.Session() as sess:
+        sess.run( init_op )
+        r = sess.run( output_seq )
+        print( r.shape )
     
     """
     last_rnn = tf.gather( output_seq , int( output_seq.get_shape()[0] -1  )  )

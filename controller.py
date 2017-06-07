@@ -51,18 +51,19 @@ class RnnInstacart(snt.AbstractModule ):
 
     
     
-    def _build(self , inputs_sequence ):
+    def _build(self , inputs_sequence , prev_state ):
 
         # input_sequence [ LEN , batch_size , output_size ]
         input_shape = inputs_sequence.get_shape()
         
         batch_size =  input_shape[0]
         
-        initial_state = self._core.initial_state( batch_size )
+        #initial_state = self._core.initial_state( batch_size )
         print( "controller shape ")
         print( inputs_sequence.shape )
-        output_seq , final_state = self._core(inputs_sequence , initial_state )
+        output_seq , final_state = self._core(inputs_sequence , prev_state )
 
+        
         """
         if self.use_dynamic :
             output_seq , final_state = tf.nn.dynamic_rnn(
@@ -89,16 +90,15 @@ class RnnInstacart(snt.AbstractModule ):
         print(output_seq.shape )
         
        
-        output_seq = snt.Linear( self._output_size , name="output_linear" )( output_seq )
+        #output_seq = snt.Linear( self._output_size , name="output_linear" )( output_seq )
         
         
-        print(output_seq.shape )
         return output_seq , final_state
     
         
-    def initial_state(self , batch_size ):
+    def initial_state(self , batch_size , dtype ):
 
-        return self._core.initial_state(batch_size )
+        return self._core.initial_state(batch_size , dtype )
         
     @property
     def state_size(self):

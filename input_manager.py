@@ -6,6 +6,10 @@ from tensorflow.python.lib.io.tf_record import TFRecordCompressionType
 
 import sonnet as snt
 
+import pandas as pd 
+import numpy as np 
+# this class will handle the inputs. 
+
 # this is for the onehot encoding vector
 
 TOTAL_ITEMS = 49690 # total podructs
@@ -76,7 +80,7 @@ def parse_examples( examples ):
 
 class DataInstacart(snt.AbstractModule):
 
-    def __init__(self , batch_size , num_epochs , name = 'data_m'):
+    def __init__(self ,  path_products , batch_size  , num_epochs , name = 'data_m'):
 
 
         super(DataInstacart , self ).__init__(name)
@@ -86,7 +90,12 @@ class DataInstacart(snt.AbstractModule):
         self.num_epochs = num_epochs
 
         self.shape_sample = [ LEN , batch_size , TOTAL_ITEMS  ]
-        self.shape_target = [ 1 , batch_size , TOTAL_ITEMS ]
+        self.shape_target = [ batch_size , TOTAL_ITEMS ]
+
+        self.df_products_c = pd.read_csv( path_products , dtype ={ 'product_id': int , 'product_name' : str , 'aisle_id': int , 'deparment_id': int  } )
+
+        self.df_products = self.df_products_c['product_id']
+        
             
     def _build(self, data_files):
         # recieves the data files where the .tfrecord lies.
@@ -133,3 +142,54 @@ class DataInstacart(snt.AbstractModule):
         # feature [ LEN , batch_size , TOTAL ]
         # target  [ batch_size ,  TOTAL ]
         return result  
+
+    def to_human_read(self , data , sep = " " ):
+
+        # data [ batch , LEN ]
+
+        # return [batch , "string" ]
+        batch_size = data.shape[0]
+        vec_size = data.shape[1]
+        for batch in range(0 , batch_size ) :
+            print("asdasdas")
+            # for each batch
+            # data[1]
+            index = np.arange( 0 , vec_size )
+            mask = ( data[batch][:] == 1  ) 
+            index = index[ mask ]
+            #print(index)
+            elements = self.df_products[ index ].values
+            resp = ""
+            for el in elements:
+                resp += str(el) 
+                resp += " "
+                
+            print("elementos")
+            # return a generator to be iterated in order to save it for a prediction
+            yield( resp )
+            #print( resp  ) 
+    
+    def cost( self , last_output , target ):
+    # last output [ batch_size , ToT ]
+    # target [ batch_size , TOT ]
+
+    # sigmoid cross entropy, because the classes arent mutially exclusive
+
+    
+        xent = tf.nn.sigmoid_cross_entropy_with_logits( logits = last_output , labels = target )
+
+        return xent
+
+    def cost_f1( self , last_output , target ):
+
+        TP = tf.count_nonzero( target*last_output )
+        TN = tf.count_nonzero( (last_output -1 )*(target -1 ) )
+        FP = tf.count_nonzero( last_output*(target-1) )
+        FN = tf.count_nonzero( (last_output-1)*target )
+
+        precision = TP/(TP + FP )
+        recall = TP/( TP + FN )
+        
+        return 2*precision*recall/(  precision + recall )
+    
+    
