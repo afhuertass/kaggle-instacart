@@ -13,7 +13,8 @@ import numpy as np
 # this is for the onehot encoding vector
 
 TOTAL_ITEMS = 49690 # total podructs
-LEN = 100  # 
+LEN = 100  #
+LEN_MAX = 100
 def parse_examples( examples ):
         # parse the data from the file, to an apropiated format
     
@@ -23,10 +24,18 @@ def parse_examples( examples ):
         ) ,
         'feature': tf.VarLenFeature(
         dtype = tf.int64
-        )
+        ) ,
+
+       
     }
     parsed = tf.parse_example(examples , feature_map )
+
+    print("expliquese gonorrea")
     
+    
+    #idd =  tf.reshape( parsed['idsd'] , shape = [1] )
+
+   
     """
     so far here we have feature = [ n_inputs ] , 
     target = [ n_targets ] ,  targets should be a one hot encoding
@@ -35,7 +44,7 @@ def parse_examples( examples ):
     print("shape target")
    
 
-    sparse_target_indices = tf.reshape( parsed['target'].values , shape=(-1 , ) )
+    sparse_target_indices = tf.reshape( parsed['target'].values[:] , shape=[ -1] )
     print("shape target indiciiiii")
     print(sparse_target_indices.shape)
    
@@ -55,16 +64,23 @@ def parse_examples( examples ):
     target = tf.reshape( target , [ -1 ,TOTAL_ITEMS ] )
     print(target.shape) 
     print("targets good")
+
+    print("asdasdasdadas")
+
+
     
-    sparse_feature_indices = tf.reshape(  parsed['feature'].values[-LEN:] , shape=(-1 , ) )
+    
+    sparse_feature_indices = tf.reshape(  parsed['feature'].values[:] , shape=[ LEN ]  )
+    # contar el 
     
     #sparse_feature_indices = tf.to_int64( sparse_feature_indices )
-    print("sparse features")
+    print("sparse features aaaa")
+    print( sparse_feature_indices.shape )
     features = tf.one_hot( sparse_feature_indices , TOTAL_ITEMS , on_value = 1.0 ,
                            off_value = 0.0 ,  )
     
     print( features.shape )
-    features = tf.reshape( features , shape = ( LEN  ,TOTAL_ITEMS )  )
+    features = tf.reshape( features , shape = [ -1 ,  LEN  ,TOTAL_ITEMS ]  )
     
     print("one hot re hot ")
         
@@ -75,29 +91,34 @@ def parse_examples( examples ):
     print( features.shape )
     print( target.shape )
     
-    return features , target
+
+
+    
+    return features , target 
     
 
 class DataInstacart(snt.AbstractModule):
 
-    def __init__(self ,  path_products , batch_size  , num_epochs , name = 'data_m'):
+    def __init__(self ,  path_products , batch_size   , name = 'data_m'):
 
 
         super(DataInstacart , self ).__init__(name)
 
         self.batch_size = batch_size
 
-        self.num_epochs = num_epochs
+        
 
         self.shape_sample = [ LEN , batch_size , TOTAL_ITEMS  ]
-        self.shape_target = [ batch_size , TOTAL_ITEMS ]
+        self.shape_target = [  batch_size , TOTAL_ITEMS ]
+        self.shape_id = [batch_size , 1 ] 
+        
 
         self.df_products_c = pd.read_csv( path_products , dtype ={ 'product_id': int , 'product_name' : str , 'aisle_id': int , 'deparment_id': int  } )
 
         self.df_products = self.df_products_c['product_id']
         
             
-    def _build(self, data_files):
+    def _build(self, data_files , num_epochs ):
         # recieves the data files where the .tfrecord lies.
         # so it build the queue to read from the files and retrieve the data tensors
         
@@ -109,7 +130,7 @@ class DataInstacart(snt.AbstractModule):
         queue_size_multiplier = thread_count + 3
         capacity = self.batch_size*2
         
-        filename_queue = tf.train.string_input_producer(   data_files    )
+        filename_queue = tf.train.string_input_producer(   data_files , num_epochs = num_epochs   )
         
         _ , encoded_examples = tf.TFRecordReader(
             options = tf.python_io.TFRecordOptions  (
@@ -119,17 +140,17 @@ class DataInstacart(snt.AbstractModule):
 
 
         #features, target = parse_examples( encoded_examples )
-        feature, target =  parse_examples( encoded_examples )
+        feature, target  =  parse_examples( encoded_examples )
         # define certain capacity
         
-
+        
         print("shapes train batchs")
         print( feature.shape )
         print( target.shape  )
         
         # of change to a shuffle batch 
         result = tf.train.batch(
-            [feature,target] , batch_size = self.batch_size  ,
+            [feature,target ] , batch_size = self.batch_size  ,
             capacity = capacity ,
             allow_smaller_final_batch=True ,
             enqueue_many = False ,
@@ -138,9 +159,17 @@ class DataInstacart(snt.AbstractModule):
 
         result[0] = tf.reshape( result[0] , self.shape_sample )
         result[1] = tf.reshape(  result[1] , self.shape_target )
+       
+        
         #print( result )
         # feature [ LEN , batch_size , TOTAL ]
         # target  [ batch_size ,  TOTAL ]
+
+        print("shapes train batchs FINAL")
+        print( result[0].shape )
+        print( result[1].shape  )
+
+        
         return result  
 
     def to_human_read(self , data , sep = " " ):
@@ -150,12 +179,13 @@ class DataInstacart(snt.AbstractModule):
         # return [batch , "string" ]
         batch_size = data.shape[0]
         vec_size = data.shape[1]
+        
         for batch in range(0 , batch_size ) :
-            print("asdasdas")
+            
             # for each batch
             # data[1]
             index = np.arange( 0 , vec_size )
-            mask = ( data[batch][:] == 1  ) 
+            mask = ( data[batch][:] > 0.5  ) 
             index = index[ mask ]
             #print(index)
             elements = self.df_products[ index ].values
@@ -165,7 +195,7 @@ class DataInstacart(snt.AbstractModule):
                 resp += " "
                 
             print("elementos")
-            # return a generator to be iterated in order to save it for a prediction
+    # return a generator to be iterated in order to save it for a prediction
             yield( resp )
             #print( resp  ) 
     
@@ -175,10 +205,17 @@ class DataInstacart(snt.AbstractModule):
 
     # sigmoid cross entropy, because the classes arent mutially exclusive
 
-    
+        
         xent = tf.nn.sigmoid_cross_entropy_with_logits( logits = last_output , labels = target )
+        xent_batch = tf.reduce_mean( xent , axis = 1)
 
-        return xent
+        batch_size = tf.cast(tf.shape(last_output)[0], dtype=xent_batch.dtype)
+        
+        xent_total = tf.reduce_sum( xent_batch ) / batch_size
+        
+        print(  xent_total.shape ) 
+        return  xent_total
+    
 
     def cost_f1( self , last_output , target ):
 
@@ -189,7 +226,11 @@ class DataInstacart(snt.AbstractModule):
 
         precision = TP/(TP + FP )
         recall = TP/( TP + FN )
+
+        f1mean_batch = tf.reduce_sum(   2*precision*recall/(  precision + recall ) , axis = 1  )
         
-        return 2*precision*recall/(  precision + recall )
+        batch_size = tf.cast(tf.shape(last_output)[0], dtype=xent_batch.dtype)
+        
+        return   tf.reduce_sum( f1mean_batch)/batch_size
     
     

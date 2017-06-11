@@ -4,14 +4,14 @@ import tensorflow as tf
 import numpy as np 
 import input_manager as input_m
 
-TRAIN_PATH = [ "../data/train.pb2" ] 
+TRAIN_PATH = [ "../data/train-2.pb2" ] 
 path_products = "../data/csvs/products.csv"
 
 def main(unused_args):
 
-    input_manager = input_m.DataInstacart( path_products , 2 , 2 )
-    
-    feature, target = input_manager(TRAIN_PATH)
+    input_manager = input_m.DataInstacart( path_products  , 2 )
+    num_epochs = 2
+    feature, target = input_manager(TRAIN_PATH , num_epochs)
     # dataset_ops =  feature , labels
     init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
 

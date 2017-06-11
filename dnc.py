@@ -37,7 +37,10 @@ class DNC( snt.RNNCore ):
         controller_state=  self._controller.state_size 
         )
         
-        
+
+    def clip_output(self , output ):
+
+        return tf.clip_by_value(output , clip_value_min = 0 , clip_value_max = 1.0  )
 
     def _build(self , inputs , prev_state ):
 
@@ -76,6 +79,8 @@ class DNC( snt.RNNCore ):
 
 
         output = snt.Linear( output_size = self._output_size.as_list()[0] , name = "linear_output" )(output)
+
+        output = self.clip_output( output )
         
         return output , DNCState(
             controller_state = controller_state,
