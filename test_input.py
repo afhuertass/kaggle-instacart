@@ -28,9 +28,9 @@ def main(unused_args):
             while not coord.should_stop():
                 t = sess.run( target )
                 print("riko-loop shape")
-                print(  t.shape   )
+                print(  np.where( t != 0 )    )
                 print("riko-loop")
-                coord.request_stop()
+                
         except tf.errors.OutOfRangeError:
             print("fuckk")
             

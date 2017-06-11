@@ -26,14 +26,16 @@ def parse_examples( examples ):
         dtype = tf.int64
         ) ,
 
-       
+       'ids' : tf.VarLenFeature(
+           dtype = tf.int64
+       )
     }
     parsed = tf.parse_example(examples , feature_map )
 
     print("expliquese gonorrea")
     
     
-    #idd =  tf.reshape( parsed['idsd'] , shape = [1] )
+    idd =  tf.reshape( parsed['ids'].values[:1] , shape = [1] )
 
    
     """
@@ -70,7 +72,7 @@ def parse_examples( examples ):
 
     
     
-    sparse_feature_indices = tf.reshape(  parsed['feature'].values[:] , shape=[ LEN ]  )
+    sparse_feature_indices = tf.reshape(  parsed['feature'].values[:LEN] , shape=[ LEN ]  )
     # contar el 
     
     #sparse_feature_indices = tf.to_int64( sparse_feature_indices )
@@ -80,7 +82,7 @@ def parse_examples( examples ):
                            off_value = 0.0 ,  )
     
     print( features.shape )
-    features = tf.reshape( features , shape = [ -1 ,  LEN  ,TOTAL_ITEMS ]  )
+    features = tf.reshape( features , shape = [   LEN  ,TOTAL_ITEMS ]  )
     
     print("one hot re hot ")
         
@@ -94,7 +96,7 @@ def parse_examples( examples ):
 
 
     
-    return features , target 
+    return features , target , idd 
     
 
 class DataInstacart(snt.AbstractModule):
