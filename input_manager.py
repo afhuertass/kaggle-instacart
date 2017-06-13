@@ -142,7 +142,7 @@ class DataInstacart(snt.AbstractModule):
 
 
         #features, target = parse_examples( encoded_examples )
-        feature, target  =  parse_examples( encoded_examples )
+        feature, target , idd  =  parse_examples( encoded_examples )
         # define certain capacity
         
         
@@ -152,7 +152,7 @@ class DataInstacart(snt.AbstractModule):
         
         # of change to a shuffle batch 
         result = tf.train.batch(
-            [feature,target ] , batch_size = self.batch_size  ,
+            [feature,target , idd ] , batch_size = self.batch_size  ,
             capacity = capacity ,
             allow_smaller_final_batch=True ,
             enqueue_many = False ,
@@ -161,7 +161,7 @@ class DataInstacart(snt.AbstractModule):
 
         result[0] = tf.reshape( result[0] , self.shape_sample )
         result[1] = tf.reshape(  result[1] , self.shape_target )
-       
+        result[2] = tf.reshape( result[2] , [self.batch_size , 1 ])
         
         #print( result )
         # feature [ LEN , batch_size , TOTAL ]
@@ -174,14 +174,34 @@ class DataInstacart(snt.AbstractModule):
         
         return result  
 
-    def to_human_read(self , data , sep = " " ):
-
+    def to_human_read(self , data , ids ):
+        # ids [ batch_size ] 
         # data [ batch , LEN ]
 
         # return [batch , "string" ]
         batch_size = data.shape[0]
         vec_size = data.shape[1]
-        
+        indx = 0 
+        for idd, dat  in  zip( ids , data) :
+            vec_size = dat.shape[1]
+            index = np.arange( 0 , vec_size)
+
+            mask = data[indx][:] > 0.5
+            index = index[ mask ]
+            elements = self.df_products[index].values
+            resp = "ini"
+            for el in elements:
+                if el != 0 :
+                    resp += str(el)
+                    resp += " "
+
+            if resp == "ini":
+                resp = "None"
+
+            print( "{} , {}".format( idd , resp )   )
+            indx = indx + 1
+
+        """
         for batch in range(0 , batch_size ) :
             
             # for each batch
@@ -200,7 +220,8 @@ class DataInstacart(snt.AbstractModule):
     # return a generator to be iterated in order to save it for a prediction
             yield( resp )
             #print( resp  ) 
-    
+    """
+        
     def cost( self , last_output , target ):
     # last output [ batch_size , ToT ]
     # target [ batch_size , TOT ]
