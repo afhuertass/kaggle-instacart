@@ -183,7 +183,7 @@ class DataInstacart(snt.AbstractModule):
         vec_size = data.shape[1]
         indx = 0 
         for idd, dat  in  zip( ids , data) :
-            vec_size = dat.shape[1]
+            
             index = np.arange( 0 , vec_size)
 
             mask = data[indx][:] > 0.5
@@ -198,9 +198,11 @@ class DataInstacart(snt.AbstractModule):
             if resp == "ini":
                 resp = "None"
 
-            print( "{} , {}".format( idd , resp )   )
+            print( "{} , {}".format( idd[0] , resp )   )
             indx = indx + 1
 
+        return "vientos"
+    
         """
         for batch in range(0 , batch_size ) :
             

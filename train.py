@@ -11,7 +11,7 @@ PATH_PRODUCTS = "../data/csvs/products.csv"
 PATH_TRAIN_DATA = [ "../data/train-2.pb2" ]
 PATH_TEST_DATA = ["../data/train-2.pb2" ]
 
-NUM_ITER = 100
+NUM_ITER = 10
 REP_INTERVAL = 100
 
 MAX_GRAD_NORM = 50
@@ -145,7 +145,8 @@ def train( num_epochs , rep_interval):
             _ , loss = sess.run( [ train_step , train_loss] )
             print(loss )
 
-            print( "run test" )
+            print( "moving on bitch" )
+            """
             last_rnn_test_run = sess.run( last_rnn_test  )
             
             print( last_rnn_test_run)
@@ -154,25 +155,23 @@ def train( num_epochs , rep_interval):
             for e in human:
                 print(e)
                 #total_loss  += loss
-                
+            """
 
     ## provide predictions
-    
+    init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
     with tf.Session() as sess:
+        sess.run( init_op )
         coord = tf.train.Coordinator()
-        threads = tf.train_start_queue_runners( sess = sess , coord = coord )
+        threads = tf.train.start_queue_runners( sess = sess , coord = coord )
         try:
             step = 0
             while not coord.should_stop():
                 print( "step:{}".format( step ) )
                 # retrieve prediction , y el id 
-                prediction , idd  = sess.run( [last_rnn_test , output_sequence_test[2] ] )
-                human = input_data.to_human_read( prediction  )
-                print(  "iddd")
-                print( idd ) 
-                for e in human :
-                    step += 1 
-                    print( e )
+                prediction , idd  = sess.run( [last_rnn_test , input_tensors_test[2] ] )
+               
+                human = input_data.to_human_read( prediction , idd   )
+                step = step + 1 
         except tf.errors.OutOfRangeError :
             print("Exhausted Queue ")
         finally:

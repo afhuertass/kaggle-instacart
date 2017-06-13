@@ -10,8 +10,8 @@ path_products = "../data/csvs/products.csv"
 def main(unused_args):
 
     input_manager = input_m.DataInstacart( path_products  , 2 )
-    num_epochs = 2
-    feature, target = input_manager(TRAIN_PATH , num_epochs)
+    num_epochs = 5
+    feature, target , idds = input_manager(TRAIN_PATH , num_epochs)
     # dataset_ops =  feature , labels
     init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
 
@@ -24,15 +24,16 @@ def main(unused_args):
         threads = tf.train.start_queue_runners(sess = sess , coord=coord)
 
         try :
-            step = 0 
+            step = 0
             while not coord.should_stop():
-                t = sess.run( target )
+                t = sess.run( idds )
                 print("riko-loop shape")
-                print(  np.where( t != 0 )    )
-                print("riko-loop")
-                
+                #print(  np.where( t != 0 )    )
+                print( t ) 
+                print("riko-loop {}".format(step ) )
+                step = step +1 
         except tf.errors.OutOfRangeError:
-            print("fuckk")
+            print("fuckk - se acabo lo rico ")
             
         finally:
             coord.request_stop()
