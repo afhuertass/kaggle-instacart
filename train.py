@@ -6,20 +6,33 @@ import dnc
 import input_manager
 
 OUTPUT_SIZE = 49690
-BATCH_SIZE = 2
-PATH_PRODUCTS = "../data/csvs/products.csv"
-PATH_TRAIN_DATA = [ "../data/train-2.pb2" ]
-PATH_TEST_DATA = ["../data/train-2.pb2" ]
+BATCH_SIZE =  10
 
-NUM_ITER = 10
+PATH_PRODUCTS = "../data/csvs/products.csv"
+# PATH_PRODUCTS = "gs://kaggleun-instacart/data/products/producst.csv"
+PATH_TRAIN_DATA = [ "../data/train-2.pb2" ]
+# PATH_TRAIN_DATA = [ "gs://kaggle-instacart/train.pb2" ]
+PATH_TEST_DATA = ["../data/train-2.pb2" ]
+# PATH_TEST_DATA = ["gs://kaggle-instacart/test.pb2" ]
+
+# total train objects = 50000
+n = 5
+NUM_ITER = (50000/BATCH_SIZE)*n 
 REP_INTERVAL = 100
 
 MAX_GRAD_NORM = 50
-LEARN_RATE = 1e-4
+LEARN_RATE = 1e-2
+MULTIPLIER = 0.1
+reduce_learning_interval = 1000
 EPSILON = 1e-6
 
 CHECK_DIR = "../checkpoints"
+#CHECK_DIR = "gs://kaggle_instacart_model"
+TB_DIR = "../tensorboard"
+# TB_DIR = "gs://kaggle_instacart_tb"
 CHECK_INTERVAL = 100
+
+
 
 access_config = {
         'memory_size': 128 ,
@@ -63,8 +76,6 @@ def run_model2( dnc_core , initial_state  , inputs_sequence  , output_size ):
 
 def train( num_epochs , rep_interval):
 
-
-
     
     ## create the dnc_core 
     dnc_core = dnc.DNC( access_config = access_config , controller_config  = controller_config , output_size = OUTPUT_SIZE )
@@ -73,6 +84,7 @@ def train( num_epochs , rep_interval):
 
     #load the data
     input_data = input_manager.DataInstacart( PATH_PRODUCTS, BATCH_SIZE  )
+    
     input_tensors = input_data(PATH_TRAIN_DATA , num_epochs )
 
     # load the test data
@@ -91,13 +103,21 @@ def train( num_epochs , rep_interval):
     print( input_tensors[1])
     train_loss = input_data.cost(  last_rnn , input_tensors[1] )
 
-
+    tf.summary.scalar( 'loss' , train_loss  )
+    
     trainable_variables = tf.trainable_variables()
 
     grads , _ = tf.clip_by_global_norm(
         tf.gradients( train_loss , trainable_variables) , MAX_GRAD_NORM
     )
 
+    learning_rate = tf.get_variable(
+        "learning_rate" , shape = [],
+        dtype = tf.float32 , initializer = tf.constant_initializer(LEARN_RATE) ,
+        trainable = False 
+    )
+    
+    reduce_learning_rate = learn_rate.assign( learning_rate*MULTIPLIER  ) 
     global_step = tf.get_variable(
         name="global_step" ,
         shape = []  ,
@@ -108,15 +128,22 @@ def train( num_epochs , rep_interval):
     )
 
     optimizer = tf.train.RMSPropOptimizer(
-        LEARN_RATE , epsilon = EPSILON
+        learning_rate , epsilon = EPSILON
     )
 
     train_step = optimizer.apply_gradients(
         zip(grads, trainable_variables) , global_step = global_step
     )
 
-    saver = tf.train.Saver()
 
+    
+    saver = tf.train.Saver()
+    tf.summary.scalar( 'loss' , train_loss  )
+
+    merged_op = tf.summary.merge_all()
+
+   
+    
     if CHECK_INTERVAL > 0:
 
         hooks = [
@@ -133,29 +160,31 @@ def train( num_epochs , rep_interval):
     
     with tf.train.SingularMonitoredSession( hooks = hooks , checkpoint_dir = CHECK_DIR ) as sess:
 
-       
+        writer = tf.summary.FileWriter( TB_DIR , sess.graph )
+        
         start_iteration = sess.run(global_step)
         total_loss = 0
 
             
         for train_iteration in xrange(start_iteration , num_epochs):
 
-            t =  sess.run( input_tensors[0] ) # feats 
-            
+            #t =  sess.run( input_tensors[0] ) # feats
             _ , loss = sess.run( [ train_step , train_loss] )
-            print(loss )
-
-            print( "moving on bitch" )
-            """
-            last_rnn_test_run = sess.run( last_rnn_test  )
             
-            print( last_rnn_test_run)
-            print( "prediction ")
-            human = input_data.to_human_read( last_rnn_test_run )
-            for e in human:
-                print(e)
-                #total_loss  += loss
-            """
+            if train_iteration % 100 == 0 :
+                summary  = sess.run( merged_op  )
+                writer.add_summary(summary , train_iteration )
+            
+
+            if ( train_iteration  + 1 )% reduce_learning_interval == 0:
+                sess.run( reduce_learning_rate )
+                print("reducing learning rate")
+                
+            print( "loss:{}".format(loss)  )
+            print( "step:{}".format( train_iteration ) )
+            
+            print( "moving on bitch" )
+           
 
     ## provide predictions
     init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
@@ -167,11 +196,15 @@ def train( num_epochs , rep_interval):
             step = 0
             while not coord.should_stop():
                 print( "step:{}".format( step ) )
-                # retrieve prediction , y el id 
+                # retrieve prediction , y el id
+                print("ome gonorrea ome")
+                print( last_rnn_test.shape )
+                
                 prediction , idd  = sess.run( [last_rnn_test , input_tensors_test[2] ] )
                
                 human = input_data.to_human_read( prediction , idd   )
-                step = step + 1 
+                step = step + 1
+                
         except tf.errors.OutOfRangeError :
             print("Exhausted Queue ")
         finally:
@@ -180,7 +213,7 @@ def train( num_epochs , rep_interval):
             sess.close()
             
         
-        
+   
         
 def main( unuser_args):
 

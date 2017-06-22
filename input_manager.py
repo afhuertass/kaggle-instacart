@@ -109,10 +109,10 @@ class DataInstacart(snt.AbstractModule):
         self.batch_size = batch_size
 
         
-
-        self.shape_sample = [ LEN , batch_size , TOTAL_ITEMS  ]
-        self.shape_target = [  batch_size , TOTAL_ITEMS ]
-        self.shape_id = [batch_size , 1 ] 
+        
+        self.shape_sample = [ LEN , -1 , TOTAL_ITEMS  ]
+        self.shape_target = [  -1 , TOTAL_ITEMS ]
+        self.shape_id = [ -1  , 1 ] 
         
 
         self.df_products_c = pd.read_csv( path_products , dtype ={ 'product_id': int , 'product_name' : str , 'aisle_id': int , 'deparment_id': int  } )
@@ -159,9 +159,15 @@ class DataInstacart(snt.AbstractModule):
            
         )
 
+        print("waaaaaaaaaaaaaaaaaa")
+        print( self.batch_size )
+        print(result[0].shape)
+        print(result[1].shape)
+        print(result[2].shape)
+        
         result[0] = tf.reshape( result[0] , self.shape_sample )
         result[1] = tf.reshape(  result[1] , self.shape_target )
-        result[2] = tf.reshape( result[2] , [self.batch_size , 1 ])
+        result[2] = tf.reshape( result[2] , [-1 , 1 ])
         
         #print( result )
         # feature [ LEN , batch_size , TOTAL ]
@@ -186,7 +192,7 @@ class DataInstacart(snt.AbstractModule):
             
             index = np.arange( 0 , vec_size)
 
-            mask = data[indx][:] > 0.5
+            mask = data[indx][:] > 0.2
             index = index[ mask ]
             elements = self.df_products[index].values
             resp = "ini"
