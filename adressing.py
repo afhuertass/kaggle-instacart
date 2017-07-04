@@ -1,5 +1,4 @@
 
-
 import tensorflow as tf
 import sonnet as snt
 import util
@@ -27,7 +26,7 @@ class CosineAttention( snt.AbstractModule  ):
 
     def __init__( self ,  num_head , w_size  , name , strength_op = tf.nn.softplus ):
 
-        super(CosineAttention , self ).__init__(name)
+        super(CosineAttention , self ).__init__(name=name)
         self._num_head = num_head
         self._w_size = w_size
         self._strength_op = strength_op 
@@ -48,7 +47,7 @@ class Linkage( snt.RNNCore ):
 
     def __init__(self , memory_size , num_writes ):
         name = "linkage"
-        super( Linkage , self ).__init__(name)
+        super( Linkage , self ).__init__(name=name)
         
         self._memory_size = memory_size
         self._num_writes = num_writes
@@ -118,7 +117,7 @@ class Freeness( snt.RNNCore  ):
 
     def __init__(self , memory_size , name="freeness"):
 
-        super(Freeness , self ).__init__(name)
+        super(Freeness , self ).__init__(name=name)
         self._memory_size = memory_size
 
 

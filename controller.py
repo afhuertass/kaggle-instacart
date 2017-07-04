@@ -1,4 +1,5 @@
 
+
 import tensorflow as tf
 import sonnet as snt
 
@@ -32,7 +33,7 @@ class RnnInstacart(snt.AbstractModule ):
         self.use_dynamic = use_dynamic
         
         self._output_size = output_size 
-        super(RnnInstacart, self).__init__(name)
+        super(RnnInstacart, self).__init__(name=name)
         print("wtf")
         print(num_hidden)
         print(depth)

@@ -73,6 +73,9 @@ def parse_examples( examples ):
     
     
     sparse_feature_indices = tf.reshape(  parsed['feature'].values[:LEN] , shape=[ LEN ]  )
+    # len
+    seqlen = tf.count_nonzero( sparse_feature_indices )
+    
     # contar el 
     
     #sparse_feature_indices = tf.to_int64( sparse_feature_indices )
@@ -96,7 +99,7 @@ def parse_examples( examples ):
 
 
     
-    return features , target , idd 
+    return features , target , idd , seqlen 
     
 
 class DataInstacart(snt.AbstractModule):
@@ -104,7 +107,7 @@ class DataInstacart(snt.AbstractModule):
     def __init__(self ,  path_products , batch_size   , name = 'data_m'):
 
 
-        super(DataInstacart , self ).__init__(name)
+        super(DataInstacart , self ).__init__(name = name )
 
         self.batch_size = batch_size
 
@@ -142,7 +145,7 @@ class DataInstacart(snt.AbstractModule):
 
 
         #features, target = parse_examples( encoded_examples )
-        feature, target , idd  =  parse_examples( encoded_examples )
+        feature, target , idd , seqlen =  parse_examples( encoded_examples )
         # define certain capacity
         
         
@@ -152,7 +155,7 @@ class DataInstacart(snt.AbstractModule):
         
         # of change to a shuffle batch 
         result = tf.train.batch(
-            [feature,target , idd ] , batch_size = self.batch_size  ,
+            [feature,target , idd  , seqlen ] , batch_size = self.batch_size  ,
             capacity = capacity ,
             allow_smaller_final_batch=True ,
             enqueue_many = False ,
@@ -204,10 +207,12 @@ class DataInstacart(snt.AbstractModule):
             if resp == "ini":
                 resp = "None"
 
-            print( "{} , {}".format( idd[0] , resp )   )
+            #print( "{} , {}".format( idd[0] , resp )   )
+            yield "{},{} \n".format( idd[0] , resp )
+            
             indx = indx + 1
 
-        return "vientos"
+        
     
         """
         for batch in range(0 , batch_size ) :

@@ -1,13 +1,11 @@
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import print_function
-
+import adressing
 import tensorflow as tf 
 import numpy as np
 import sonnet as snt
 import collections
-import adressing 
+
+
 
 AccessState = collections.namedtuple('AccessState', (
     'memory', 'read_weights', 'write_weights', 'linkage', 'usage'))
@@ -41,7 +39,7 @@ class MemoryAccess(snt.RNNCore ):
 
 
 
-        super(MemoryAccess , self).__init__(name)
+        super(MemoryAccess , self).__init__(name=name)
         self._memory_size = memory_size
         self._w_size = w_size
         self._num_reads = num_reads

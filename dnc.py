@@ -1,11 +1,9 @@
 import collections
-
-
 import tensorflow as tf
 import numpy as np 
 
 import controller as contr
-import access 
+import access
 import sonnet as snt
 
 
@@ -17,7 +15,7 @@ class DNC( snt.RNNCore ):
     def __init__(self , access_config , controller_config ,  output_size , name = "my-dnc" ):
 
 
-        super(DNC , self).__init__( name)
+        super(DNC , self).__init__( name = name )
         # create the controller
 
         with self._enter_variable_scope():
