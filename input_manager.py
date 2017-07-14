@@ -81,11 +81,10 @@ def parse_examples( examples ):
     #sparse_feature_indices = tf.to_int64( sparse_feature_indices )
     print("sparse features aaaa")
     print( sparse_feature_indices.shape )
-    features = tf.one_hot( sparse_feature_indices , TOTAL_ITEMS , on_value = 1.0 ,
-                           off_value = 0.0 ,  )
-    
+  
+    features = tf.reshape( sparse_feature_indices   , shape = [ 1 , LEN  ]  )
     print( features.shape )
-    features = tf.reshape( features , shape = [   LEN  ,TOTAL_ITEMS ]  )
+    
     
     print("one hot re hot ")
         
@@ -113,8 +112,8 @@ class DataInstacart(snt.AbstractModule):
 
         
         
-        self.shape_sample = [ LEN , -1 , TOTAL_ITEMS  ]
-        self.shape_target = [  -1 , TOTAL_ITEMS ]
+        self.shape_sample = [ -1 , LEN  , 1  ] # a set of sequence has shape [ Batch_size , LEN , 1 ]  
+        self.shape_target = [  -1 , TOTAL_ITEMS ] # a target is sized [ batch_size , TOTAL ]
         self.shape_id = [ -1  , 1 ] 
         
 
@@ -132,7 +131,7 @@ class DataInstacart(snt.AbstractModule):
         # build the shit
         print(data_files)
         thread_count = multiprocessing.cpu_count()
-        min_after_dequeue = 10
+        min_after_dequeue = 1
         queue_size_multiplier = thread_count + 3
         capacity = self.batch_size*2
         
