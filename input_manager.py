@@ -15,6 +15,10 @@ import numpy as np
 TOTAL_ITEMS = 49690 # total podructs
 LEN = 150  #
 LEN_MAX = 150
+ """'feature': tf.VarLenFeature(
+        dtype = tf.int64
+        )
+"""
 def parse_examples( examples ):
         # parse the data from the file, to an apropiated format
     
@@ -22,8 +26,8 @@ def parse_examples( examples ):
         'target': tf.VarLenFeature(
             dtype = tf.int64
         ) ,
-        'feature': tf.VarLenFeature(
-        dtype = tf.int64
+        'feature':  tf.FixedLenFeature (
+            shape = [LEN] , dtype = tf.float32 ) 
         ) ,
 
        'ids' : tf.VarLenFeature(
@@ -72,19 +76,14 @@ def parse_examples( examples ):
 
     
     
-    sparse_feature_indices = tf.reshape(  parsed['feature'].values[:LEN] , shape=[ LEN ]  )
     # len
-    seqlen = tf.count_nonzero( sparse_feature_indices )
+    seqlen = tf.count_nonzero( parsed['features'] )
     
     # contar el 
     
     #sparse_feature_indices = tf.to_int64( sparse_feature_indices )
-    print("sparse features aaaa")
-    print( sparse_feature_indices.shape )
-  
-    features = tf.reshape( sparse_feature_indices   , shape = [ 1 , LEN  ]  )
-
-    features = tf.cast( features , tf.float32 )
+    print("NO SPARSE USE")
+    features = tf.reshape(  parsed['features']  , shape = [ 1 , LEN  ]  )
     print( features.shape )
     
     
