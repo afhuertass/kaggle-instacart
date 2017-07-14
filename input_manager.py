@@ -114,7 +114,7 @@ class DataInstacart(snt.AbstractModule):
 
         
         
-        self.shape_sample = [ -1 , LEN  , 1  ] # a set of sequence has shape [ Batch_size , LEN , 1 ]  
+        self.shape_sample = [ LEN , -1  , 1  ] # a set of sequence has shape [ LEN , BATCH_SIZE , 1 ]  
         self.shape_target = [  -1 , TOTAL_ITEMS ] # a target is sized [ batch_size , TOTAL ]
         self.shape_id = [ -1  , 1 ] 
         
