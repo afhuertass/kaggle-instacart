@@ -1,13 +1,15 @@
 import tensorflow as tf
+from tensorflow.python.lib.io import file_io
+import cPickle
 import numpy as np
 import sys
 
 
 import dnc
 import input_manager
-
+# 49688
 OUTPUT_SIZE = 49690
-BATCH_SIZE =  10  
+BATCH_SIZE =  40
 
 # Local parameters
 """
@@ -20,24 +22,27 @@ TB_DIR = "../tensorboard"
 ### Cloud parameters
 
 
-PATH_TRAIN_DATA = [ "gs://kaggle-instacart/data/train.pb2" ]
-PATH_TEST_DATA = ["gs://kaggle-instacart/test.pb2" ]
+PATH_TRAIN_DATA = [ "gs://kaggleun-instacart/data/train.pb2" , "gs://kaggleun-instacart/data/train2.pb2" ]
+PATH_TEST_DATA = ["gs://kaggleun-instacart/test.pb2" ]
 PATH_PRODUCTS = "gs://kaggleun-instacart/data/products/products.csv"
 CHECK_DIR = "gs://kaggle_instacart_model"
 TB_DIR = "gs://kaggle_instacart_tb"
 
 
 # total train objects = 50000
-n = 1 # actual number of runnings over all the training data 
+n = 100 # actual number of runnings over all the training data 
 NUM_ITER = 3
 NUM_ITER_TEST = 10 
 NUM_ITER = (50000/BATCH_SIZE)*n  # numero the training epochs 
 NUM_ITER_TEST = (75000/BATCH_SIZE)*1 # para obtener las prediciones
 
+#test delete for training
 REP_INTERVAL = 100
 
+NUM_ITER_TEST = 10
+
 MAX_GRAD_NORM = 50
-LEARN_RATE = 1e-2
+LEARN_RATE = 1e-3
 MULTIPLIER = 0.1
 reduce_learning_interval = 1000
 EPSILON = 1e-3
@@ -45,7 +50,7 @@ EPSILON = 1e-3
 
 #CHECK_DIR = "gs://kaggle_instacart_model"
 # TB_DIR = "gs://kaggle_instacart_tb"
-CHECK_INTERVAL = 100
+CHECK_INTERVAL = 1000
 
 
 
@@ -61,21 +66,6 @@ controller_config = {
         'output_size' : OUTPUT_SIZE
     }
 
-def run_model( inputs_sequence , output_size ):
-    # build the model
-  
-    
-    dnc_core = dnc.DNC( access_config = access_config , controller_config  = controller_config , output_size = output_size )
-
-    initial_state = dnc_core.initial_state(BATCH_SIZE)
-
-    output_sequence , _ = tf.nn.dynamic_rnn(
-        cell = dnc_core ,
-        inputs = inputs_sequence ,
-        time_major = True ,
-        initial_state = initial_state 
-    )
-    return output_sequence
 
 def run_model2( dnc_core , initial_state  , inputs_sequence , seqlen  , output_size ):
 
@@ -119,6 +109,9 @@ def train( num_epochs , rep_interval):
     print( input_tensors[1])
     train_loss = input_data.cost(  last_rnn , input_tensors[1] )
 
+    #eval_loss = input_data.cost_f1( last_rnn , input_tensors[1] )
+    
+    
     tf.summary.scalar( 'loss' , train_loss  )
     
     trainable_variables = tf.trainable_variables()
@@ -182,10 +175,13 @@ def train( num_epochs , rep_interval):
         start_iteration = sess.run(global_step)
         total_loss = 0
 
-            
+        print("start:{}".format( start_iteration ) )
+        
         for train_iteration in xrange(start_iteration , num_epochs):
 
             #t =  sess.run( input_tensors[0] ) # feats
+            # 
+            break 
             _ , loss = sess.run( [ train_step , train_loss] )
             
             if train_iteration % 100 == 0 :
@@ -197,47 +193,59 @@ def train( num_epochs , rep_interval):
                 sess.run( reduce_learning_rate )
                 print("reducing learning rate")
                 
-            print( "loss:{}".format(loss)  )
-            print( "step:{}".format( train_iteration ) )
+            if train_iteration % 500 == 0 :
+               
+                print( "loss:{}".format(loss)  )
+               
+                print( "step-training:{}".format( train_iteration ) )
             
-            print( "moving on bitch" )
            
 
-    ## provide predictions
-    ## write them to the cloud
-    predfile = open(CHECK_DIR+"/subme.txt" , 'w')
     
     init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
+    result = "order_id,products\n"
+
+    L = [] 
     with tf.Session() as sess:
         sess.run( init_op )
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners( sess = sess , coord = coord )
         try:
             step = 0
-            while not coord.should_stop():
-                print( "step:{}".format( step ) )
-                # retrieve prediction , y el id
-                print("ome gonorrea ome")
-                print( last_rnn_test.shape )
-                
+            for i in xrange(0 , NUM_ITER_TEST):
+            #while not coord.should_stop():
+
+                if i % 1000 == 0:
+                    print( "step:{}".format( step ) )
+                    # retrieve prediction , y el id
+                    
                 prediction , idd  = sess.run( [last_rnn_test , input_tensors_test[2] ] )
-               
+                L.append( ( prediction,idd)  )
+                
                 human = input_data.to_human_read( prediction , idd   )
                 for e in human:
-                    predfile.write(e)
+                    result += e 
+                    #predfile.write(e)
                 step = step + 1
                 
         except tf.errors.OutOfRangeError :
             print("Exhausted Queue ")
         finally:
-            predfile.close()
+            
             coord.request_stop()
             coord.join(threads)
             sess.close()
-            
+
+    with file_io.FileIO(CHECK_DIR+"/subme-n.pickle" , 'w+') as f:
+
+        cPickle.dump( result , f )
+        print("printed")
+
+    with file_io.FileIO(CHECK_DIR+"/full-result.pickle" , 'w+') as f:
+        cPickle.dump( L , f )
+        print("pickled")
         
-   
-        
+    
 def main( unuser_args):
 
     train(NUM_ITER , REP_INTERVAL)

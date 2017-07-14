@@ -13,8 +13,8 @@ import numpy as np
 # this is for the onehot encoding vector
 
 TOTAL_ITEMS = 49690 # total podructs
-LEN = 100  #
-LEN_MAX = 100
+LEN = 150  #
+LEN_MAX = 150
 def parse_examples( examples ):
         # parse the data from the file, to an apropiated format
     
@@ -118,10 +118,11 @@ class DataInstacart(snt.AbstractModule):
         self.shape_id = [ -1  , 1 ] 
         
 
-        self.df_products_c = pd.read_csv( path_products , dtype ={ 'product_id': int , 'product_name' : str , 'aisle_id': int , 'deparment_id': int  } )
+        #self.df_products_c = pd.read_csv( path_products , dtype ={ 'product_id': int , 'product_name' : str , 'aisle_id': int , 'deparment_id': int  } )
 
-        self.df_products = self.df_products_c['product_id']
-        
+        #self.df_products = self.df_products_c['product_id']
+        self.df_products = np.arange( 1 , 49690)
+        # lista de productos 
             
     def _build(self, data_files , num_epochs ):
         # recieves the data files where the .tfrecord lies.
@@ -131,7 +132,7 @@ class DataInstacart(snt.AbstractModule):
         # build the shit
         print(data_files)
         thread_count = multiprocessing.cpu_count()
-        min_after_dequeue = 1000
+        min_after_dequeue = 10
         queue_size_multiplier = thread_count + 3
         capacity = self.batch_size*2
         
@@ -154,12 +155,11 @@ class DataInstacart(snt.AbstractModule):
         print( target.shape  )
         
         # of change to a shuffle batch 
-        result = tf.train.batch(
-            [feature,target , idd  , seqlen ] , batch_size = self.batch_size  ,
+        result = tf.train.shuffle_batch(
+            [feature,target , idd  , seqlen ] ,
+            batch_size = self.batch_size  ,
             capacity = capacity ,
-            allow_smaller_final_batch=True ,
-            enqueue_many = False ,
-           
+            min_after_dequeue =  min_after_dequeue
         )
 
         print("waaaaaaaaaaaaaaaaaa")
@@ -190,50 +190,28 @@ class DataInstacart(snt.AbstractModule):
         # return [batch , "string" ]
         batch_size = data.shape[0]
         vec_size = data.shape[1]
-        indx = 0 
+        indx = 0
+        print("adsadasdas")
         for idd, dat  in  zip( ids , data) :
             
-            index = np.arange( 0 , vec_size)
-
-            mask = data[indx][:] > 0.2
-            index = index[ mask ]
-            elements = self.df_products[index].values
-            resp = "ini"
-            for el in elements:
-                if el != 0 :
+            index = np.where( dat > 0.3 )[0]
+            print("some info")
+            print( dat.shape )
+            print( np.max( dat ) )
+            print( index ) 
+            if len(index) == 0 :
+                print("no index")
+                yield "{},{}\n".format(idd[0], "None")
+            else:
+                resp = ""
+                for el in index:
+                    if el == 0 :
+                        continue
                     resp += str(el)
                     resp += " "
-
-            if resp == "ini":
-                resp = "None"
-
-            #print( "{} , {}".format( idd[0] , resp )   )
-            yield "{},{} \n".format( idd[0] , resp )
+                    #print( "{} , {}".format( idd[0] , resp )   )
+                yield "{},{} \n".format( idd[0] , resp )
             
-            indx = indx + 1
-
-        
-    
-        """
-        for batch in range(0 , batch_size ) :
-            
-            # for each batch
-            # data[1]
-            index = np.arange( 0 , vec_size )
-            mask = ( data[batch][:] > 0.5  ) 
-            index = index[ mask ]
-            #print(index)
-            elements = self.df_products[ index ].values
-            resp = ""
-            for el in elements:
-                resp += str(el) 
-                resp += " "
-                
-            print("elementos")
-    # return a generator to be iterated in order to save it for a prediction
-            yield( resp )
-            #print( resp  ) 
-    """
         
     def cost( self , last_output , target ):
     # last output [ batch_size , ToT ]
