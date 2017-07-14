@@ -83,6 +83,8 @@ def parse_examples( examples ):
     print( sparse_feature_indices.shape )
   
     features = tf.reshape( sparse_feature_indices   , shape = [ 1 , LEN  ]  )
+
+    features = tf.cast( features , tf.float32 )
     print( features.shape )
     
     
