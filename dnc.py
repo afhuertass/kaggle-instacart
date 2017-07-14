@@ -61,6 +61,9 @@ class DNC( snt.RNNCore ):
         prev_access_state = prev_state.access_state
         prev_controller_state = prev_state.controller_state
 
+        print("shapes access things ")
+        print(prev_access_output.shape )
+        
         ## waithhhhh
         controller_inputs = tf.concat(
             [batch_flatten(inputs) , batch_flatten(prev_access_output) ]  , 1 ) 
