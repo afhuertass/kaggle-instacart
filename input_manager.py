@@ -25,7 +25,7 @@ def parse_examples( examples ):
         ) ,
         'feature':  tf.FixedLenFeature (
             shape = [LEN] , dtype = tf.float32 ) 
-        ) ,
+         ,
 
        'ids' : tf.VarLenFeature(
            dtype = tf.int64
