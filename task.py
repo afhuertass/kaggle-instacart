@@ -28,7 +28,9 @@ NUM_ITER = (50000/BATCH_SIZE)*n  # numero the training epochs
 NUM_ITER_TEST = (75000/BATCH_SIZE)*1 # para obtener las prediciones
 
 #test delete for training
-
+NUM_ITER = 3
+NUM_ITER_TEST = 10
+#
 REP_INTERVAL = 100 
 MAX_GRAD_NORM = 50
 LEARN_RATE = 1e-3
