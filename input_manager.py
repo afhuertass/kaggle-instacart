@@ -24,7 +24,7 @@ def parse_examples( examples ):
             dtype = tf.int64
         ) ,
         'feature':  tf.FixedLenFeature (
-            shape = [LEN] , dtype = tf.float32 ) 
+            shape = [LEN] , dtype = tf.int64 ) 
          ,
 
        'ids' : tf.VarLenFeature(
@@ -81,6 +81,7 @@ def parse_examples( examples ):
     #sparse_feature_indices = tf.to_int64( sparse_feature_indices )
     print("NO SPARSE USE")
     features = tf.reshape(  parsed['feature']  , shape = [ 1 , LEN  ]  )
+    features = tf.cast(features , tf.float32 )
     print( features.shape )
     
     
