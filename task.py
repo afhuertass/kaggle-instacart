@@ -141,8 +141,6 @@ def train( num_epochs , rep_interval):
 
     merged_op = tf.summary.merge_all()
 
-   
-    
     if CHECK_INTERVAL > 0:
 
         hooks = [
@@ -155,9 +153,14 @@ def train( num_epochs , rep_interval):
     else:
         hooks = []
 
-   
+
+
+
+    config = tf.ConfigProto()
+    config.gpu_options.allow_growth=True
     
-    with tf.train.SingularMonitoredSession( hooks = hooks , checkpoint_dir = CHECK_DIR ) as sess:
+    
+    with tf.train.SingularMonitoredSession( hooks = hooks , checkpoint_dir = CHECK_DIR , config = config ) as sess:
 
         writer = tf.summary.FileWriter( TB_DIR , sess.graph )
         
@@ -169,7 +172,7 @@ def train( num_epochs , rep_interval):
         for train_iteration in xrange(start_iteration , num_epochs):
 
             #t =  sess.run( input_tensors[0] ) # feats
-            # 
+            # training step 
             _ , loss = sess.run( [ train_step , train_loss] )
             
             if train_iteration % 100 == 0 :
