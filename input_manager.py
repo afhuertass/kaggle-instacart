@@ -15,7 +15,6 @@ import numpy as np
 TOTAL_ITEMS = 49690 # total podructs
 LEN = 150  #
 LEN_MAX = 150
-
 def parse_examples( examples ):
         # parse the data from the file, to an apropiated format
     
@@ -23,9 +22,9 @@ def parse_examples( examples ):
         'target': tf.VarLenFeature(
             dtype = tf.int64
         ) ,
-        'feature':  tf.FixedLenFeature (
-            shape = [LEN] , dtype = tf.int64 ) 
-         ,
+        'feature': tf.VarLenFeature(
+        dtype = tf.int64
+        ) ,
 
        'ids' : tf.VarLenFeature(
            dtype = tf.int64
@@ -73,22 +72,26 @@ def parse_examples( examples ):
 
     
     
+    sparse_feature_indices = tf.reshape(  parsed['feature'].values[:LEN] , shape=[ LEN ]  )
     # len
-    seqlen = tf.count_nonzero( parsed['feature'] )
+    seqlen = tf.count_nonzero( sparse_feature_indices )
     
     # contar el 
     
     #sparse_feature_indices = tf.to_int64( sparse_feature_indices )
-    print("NO SPARSE USE")
-    features = tf.reshape(  parsed['feature']  , shape = [ 1 , LEN  ]  )
-    features = tf.cast(features , tf.float32 )
+    print("sparse features aaaa")
+    print( sparse_feature_indices.shape )
+  
+    features = tf.reshape( sparse_feature_indices   , shape = [ 1 , LEN  ]  )
+
+    features = tf.cast( features , tf.float32 )
     print( features.shape )
     
     
     print("one hot re hot ")
         
     # target [ TOTAL_ITEMS]
-    # features [ n_inputs , TOTAL_ITEMS ] total 
+   
 
     print("shapes FINAL")
     print( features.shape )
