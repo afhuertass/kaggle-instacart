@@ -23,7 +23,7 @@ def parse_examples( examples ):
         'target': tf.VarLenFeature(
             dtype = tf.int64
         ) ,
-        'feature':  tf.FixedLenFeature (
+        'features':  tf.FixedLenFeature (
             shape = [LEN] , dtype = tf.float32 ) 
          ,
 
