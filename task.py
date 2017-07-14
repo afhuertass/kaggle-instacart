@@ -9,7 +9,7 @@ import dnc
 import input_manager
 # 49688
 OUTPUT_SIZE = 49690
-BATCH_SIZE =  40
+BATCH_SIZE =  16
 
 
 PATH_TRAIN_DATA = [ "../data/train.pb2" , "../data/train2.pb2" ]
