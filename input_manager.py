@@ -15,7 +15,8 @@ import numpy as np
 TOTAL_ITEMS = 49690 # total podructs
 LEN = 150  #
 LEN_MAX = 150
- """'feature': tf.VarLenFeature(
+ """
+feature: tf.VarLenFeature(
         dtype = tf.int64
         )
 """
