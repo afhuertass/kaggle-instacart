@@ -28,7 +28,7 @@ NUM_ITER = (50000/BATCH_SIZE)*n  # numero the training epochs
 NUM_ITER_TEST = (75000/BATCH_SIZE)*1 # para obtener las prediciones
 
 #test delete for training
-NUM_ITER = 3
+NUM_ITER = 1000
 NUM_ITER_TEST = 10
 #
 REP_INTERVAL = 100 
@@ -170,7 +170,6 @@ def train( num_epochs , rep_interval):
 
             #t =  sess.run( input_tensors[0] ) # feats
             # 
-            break 
             _ , loss = sess.run( [ train_step , train_loss] )
             
             if train_iteration % 100 == 0 :
@@ -182,7 +181,7 @@ def train( num_epochs , rep_interval):
                 sess.run( reduce_learning_rate )
                 print("reducing learning rate")
                 
-            if train_iteration % 500 == 0 :
+            if train_iteration % 10 == 0 :
                
                 print( "loss:{}".format(loss)  )
                
