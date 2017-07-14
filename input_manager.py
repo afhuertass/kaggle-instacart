@@ -23,7 +23,7 @@ def parse_examples( examples ):
         'target': tf.VarLenFeature(
             dtype = tf.int64
         ) ,
-        'features':  tf.FixedLenFeature (
+        'feature':  tf.FixedLenFeature (
             shape = [LEN] , dtype = tf.float32 ) 
          ,
 
@@ -74,13 +74,13 @@ def parse_examples( examples ):
     
     
     # len
-    seqlen = tf.count_nonzero( parsed['features'] )
+    seqlen = tf.count_nonzero( parsed['feature'] )
     
     # contar el 
     
     #sparse_feature_indices = tf.to_int64( sparse_feature_indices )
     print("NO SPARSE USE")
-    features = tf.reshape(  parsed['features']  , shape = [ 1 , LEN  ]  )
+    features = tf.reshape(  parsed['feature']  , shape = [ 1 , LEN  ]  )
     print( features.shape )
     
     
