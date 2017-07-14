@@ -11,22 +11,13 @@ import input_manager
 OUTPUT_SIZE = 49690
 BATCH_SIZE =  40
 
-# Local parameters
-"""
-PATH_PRODUCTS = "../data/csvs/products.csv"
-PATH_TRAIN_DATA = [ "../data/train-2.pb2" ]
-PATH_TEST_DATA = ["../data/train-2.pb2" ]
+
+PATH_TRAIN_DATA = [ "../data/train.pb2" , "../data/train2.pb2" ]
+PATH_TEST_DATA = ["../data/test.pb2" ]
+
+PATH_PRODUCTS = "gs://kaggleun-instacart/data/products/products.csv"
 CHECK_DIR = "../checkpoints"
 TB_DIR = "../tensorboard"
-"""
-### Cloud parameters
-
-
-PATH_TRAIN_DATA = [ "gs://kaggleun-instacart/data/train.pb2" , "gs://kaggleun-instacart/data/train2.pb2" ]
-PATH_TEST_DATA = ["gs://kaggleun-instacart/test.pb2" ]
-PATH_PRODUCTS = "gs://kaggleun-instacart/data/products/products.csv"
-CHECK_DIR = "gs://kaggle_instacart_model"
-TB_DIR = "gs://kaggle_instacart_tb"
 
 
 # total train objects = 50000
@@ -37,10 +28,8 @@ NUM_ITER = (50000/BATCH_SIZE)*n  # numero the training epochs
 NUM_ITER_TEST = (75000/BATCH_SIZE)*1 # para obtener las prediciones
 
 #test delete for training
-REP_INTERVAL = 100
 
-NUM_ITER_TEST = 10
-
+REP_INTERVAL = 100 
 MAX_GRAD_NORM = 50
 LEARN_RATE = 1e-3
 MULTIPLIER = 0.1
@@ -48,8 +37,6 @@ reduce_learning_interval = 1000
 EPSILON = 1e-3
 
 
-#CHECK_DIR = "gs://kaggle_instacart_model"
-# TB_DIR = "gs://kaggle_instacart_tb"
 CHECK_INTERVAL = 1000
 
 
