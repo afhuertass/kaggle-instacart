@@ -218,7 +218,7 @@ def test( test_file ):
 
 
         coord = tf.train.Coordinator()
-        threads.tf.start_queue_runners(sess= sess, coord= coord)
+        threads = tf.start_queue_runners(sess= sess, coord= coord)
 
         recuperado_last_rnn , recuperado_idd = tf.get_collections('outputs')
         
