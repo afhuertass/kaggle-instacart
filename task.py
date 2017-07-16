@@ -220,8 +220,12 @@ def test( test_file ):
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(sess= sess, coord= coord)
 
-        recuperado_last_rnn , recuperado_idd = tf.get_collection('outputs_test')
-        
+        LL = tf.get_collection('outputs_test')
+
+        print( LL ) 
+        print( len( LL ))
+
+        return 
         for i in range(0,100):
 
             
