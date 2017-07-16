@@ -21,7 +21,28 @@ from __future__ import print_function
 import numpy as np
 import tensorflow as tf
 
-
+thr = 0.3 
+def human( p , idds  ):
+  # recieves the prediction and ids, and generate the output 
+  #  p [ batch_size , ITEMS]
+  # idds [batch_size]
+  # we then the index of the
+  
+  for x in np.arange(0 , p.shape[0]):
+    mask = p[x][:] > 0.2
+    elements = np.nonzero( mask )
+    idd = str(ids[x]) + ", "
+    
+    resp = ""
+    for element in elements[0]:
+      resp += str(element) + " "
+      
+    if resp == "":
+      resp = "None"
+      
+    yield (idd + resp + "\n")
+  
+  
 def batch_invert_permutation(permutations):
   """Returns batched `tf.invert_permutation` for every row in `permutations`."""
   with tf.name_scope('batch_invert_permutation', values=[permutations]):
