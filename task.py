@@ -206,15 +206,15 @@ def train( num_epochs , rep_interval):
 def test( test_file ):
     # restore an generate test file
     string_to_file = "order_id, products\n"
-    
+    modelfile = "../checkpoints/model.ckpt-100.meta"
     with tf.Session() as sess:
         
         sess.run( tf.global_variables_initializer() )
         sess.run( tf.local_variables_initializer() )
         g = tf.get_default_graph()
 
-        saver = tf.train.import_meta_graph("modelfile")
-        saver.restore( sess , tf.train.latest_checkpoint("modelfolder") )
+        saver = tf.train.import_meta_graph( modelfile )
+        saver.restore( sess , tf.train.latest_checkpoint("../checkpoints/") )
 
 
         coord = tf.train.Coordinator()
@@ -222,7 +222,7 @@ def test( test_file ):
 
         recuperado_last_rnn , recuperado_idd = tf.get_collections('outputs')
         
-        for i in range(0,75000):
+        for i in range(0,100):
 
             
             prediction , idd = sess.run( [ recuperado_last_rnn , recuperado_idd ] )
@@ -249,6 +249,8 @@ def test( test_file ):
 def main( unuser_args):
 
     train(NUM_ITER , REP_INTERVAL)
+
+    test( "./sub.txt ")
     
     print("riko -train ")
 
