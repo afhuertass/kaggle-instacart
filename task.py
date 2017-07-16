@@ -99,8 +99,8 @@ def train( num_epochs , rep_interval):
 
     ### add to collection to recover for later testing
     
-    tf.add_to_collection('outputs', last_rnn_test )
-    tf.add_to_collection('outputs', input_tensors_test[2] )
+    tf.add_to_collection('outputs_test', last_rnn_test )
+    tf.add_to_collection('outputs_test', input_tensors_test[2] )
     
     train_loss = input_data.cost(  last_rnn , input_tensors[1] )
 
@@ -220,7 +220,7 @@ def test( test_file ):
         coord = tf.train.Coordinator()
         threads = tf.train.start_queue_runners(sess= sess, coord= coord)
 
-        recuperado_last_rnn , recuperado_idd = tf.get_collection('outputs')
+        recuperado_last_rnn , recuperado_idd = tf.get_collection('outputs_test')
         
         for i in range(0,100):
 
