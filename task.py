@@ -253,7 +253,7 @@ def main( unuser_args):
 
     train(NUM_ITER , REP_INTERVAL)
 
-    test( "./sub.txt ")
+    test( "./sub.txt")
     
     print("riko -train ")
 

@@ -31,7 +31,7 @@ def human( p , ids  ):
   for x in np.arange(0 , p.shape[0]):
     mask = p[x][:] > 0.2
     elements = np.nonzero( mask )
-    idd = str(ids[x]) + ", "
+    idd = str(ids[x][0]) + ", "
     
     resp = ""
     for element in elements[0]:
