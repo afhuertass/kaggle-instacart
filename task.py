@@ -1,12 +1,15 @@
 import tensorflow as tf
 from tensorflow.python.lib.io import file_io
+
+
 import cPickle
 import numpy as np
 import sys
 
-
 import dnc
 import input_manager
+import util2 as util
+
 # 49688
 OUTPUT_SIZE = 49690
 BATCH_SIZE =  16
@@ -92,10 +95,13 @@ def train( num_epochs , rep_interval):
     last_rnn = tf.gather( output_sequence , int( output_sequence.get_shape()[0] - 1  )  )
 
     last_rnn_test = tf.gather( output_sequence_test , int( output_sequence_test.get_shape()[0] - 1  )  )
+
+
+    ### add to collection to recover for later testing
     
-    print("wash going on two")
-    print(last_rnn.shape)
-    print( input_tensors[1])
+    tf.add_to_collection('outputs', last_rnn_test )
+    tf.add_to_collection('outputs', input_tensors_test[2] )
+    
     train_loss = input_data.cost(  last_rnn , input_tensors[1] )
 
     #eval_loss = input_data.cost_f1( last_rnn , input_tensors[1] )
@@ -193,48 +199,48 @@ def train( num_epochs , rep_interval):
            
 
     
-    init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
-    result = "order_id,products\n"
+    #init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
 
-    L = [] 
+    print("train finished.")
+    
+def test( test_file ):
+    # restore an generate test file
+    string_to_file = "order_id, products\n"
+    
     with tf.Session() as sess:
-        sess.run( init_op )
+        
+        sess.run( tf.global_variables_initializer() )
+        sess.run( tf.local_variables_initializer() )
+        g = tf.get_default_graph()
+
+        saver = tf.train.import_meta_graph("modelfile")
+        saver.restore( sess , tf.train.latest_checkpoint("modelfolder") )
+
+
         coord = tf.train.Coordinator()
-        threads = tf.train.start_queue_runners( sess = sess , coord = coord )
-        try:
-            step = 0
-            for i in xrange(0 , NUM_ITER_TEST):
-            #while not coord.should_stop():
+        threads.tf.start_queue_runners(sess= sess, coord= coord)
 
-                if i % 1000 == 0:
-                    print( "step:{}".format( step ) )
-                    # retrieve prediction , y el id
-                    
-                prediction , idd  = sess.run( [last_rnn_test , input_tensors_test[2] ] )
-                L.append( ( prediction,idd)  )
-                
-                human = input_data.to_human_read( prediction , idd   )
-                for e in human:
-                    result += e 
-                    #predfile.write(e)
-                step = step + 1
-                
-        except tf.errors.OutOfRangeError :
-            print("Exhausted Queue ")
-        finally:
+        recuperado_last_rnn , recuperado_idd = tf.get_collections('outputs')
+        
+        for i in range(0,75000):
+
             
-            coord.request_stop()
-            coord.join(threads)
-            sess.close()
+            prediction , idd = sess.run( [ recuperado_last_rnn , recuperado_idd ] )
 
-    with file_io.FileIO(CHECK_DIR+"/subme-n.pickle" , 'w+') as f:
+            result = util.human( prediction , idd )
+            for r in result:
+                string_to_file += r
 
-        cPickle.dump( result , f )
-        print("printed")
+            
+            # prediction [Batch_size , N]
+            # ids [ Batch_size]
+            
+            
+        # session restored
 
-    with file_io.FileIO(CHECK_DIR+"/full-result.pickle" , 'w+') as f:
-        cPickle.dump( L , f )
-        print("pickled")
+    test = open(test_file , 'w')
+    test.write( string_to_file )
+    test.close()
         
     
 def main( unuser_args):
