@@ -31,7 +31,7 @@ NUM_ITER = (50000/BATCH_SIZE)*n  # numero the training epochs
 NUM_ITER_TEST = (75000/BATCH_SIZE)*1 # para obtener las prediciones
 
 #test delete for training
-NUM_ITER = 1000
+NUM_ITER = 100
 NUM_ITER_TEST = 10
 #
 REP_INTERVAL = 100 
@@ -238,6 +238,9 @@ def test( test_file ):
             
         # session restored
 
+        coord.request_stop()
+        coord.join( threads )
+        
     test = open(test_file , 'w')
     test.write( string_to_file )
     test.close()
