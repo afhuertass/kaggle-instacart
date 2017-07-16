@@ -22,7 +22,7 @@ import numpy as np
 import tensorflow as tf
 
 thr = 0.3 
-def human( p , idds  ):
+def human( p , ids  ):
   # recieves the prediction and ids, and generate the output 
   #  p [ batch_size , ITEMS]
   # idds [batch_size]
