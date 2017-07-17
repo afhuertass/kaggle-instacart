@@ -12,7 +12,7 @@ import util2 as util
 
 # 49688
 OUTPUT_SIZE = 49690
-BATCH_SIZE =  16
+BATCH_SIZE =  50
 
 
 PATH_TRAIN_DATA = [ "../data/train.pb2" , "../data/train2.pb2" ]
@@ -25,14 +25,14 @@ TB_DIR = "../tensorboard"
 
 # total train objects = 50000
 n = 100 # actual number of runnings over all the training data 
-NUM_ITER = 3
-NUM_ITER_TEST = 10 
-NUM_ITER = (50000/BATCH_SIZE)*n  # numero the training epochs 
+NUM_ITER = 10
+
+NUM_ITER = (100000/BATCH_SIZE)*n  # numero the training epochs 
 NUM_ITER_TEST = (75000/BATCH_SIZE)*1 # para obtener las prediciones
 
 #test delete for training
-NUM_ITER = 100
-NUM_ITER_TEST = 10
+#NUM_ITER = 100
+#NUM_ITER_TEST = 10
 #
 REP_INTERVAL = 100 
 MAX_GRAD_NORM = 50
@@ -40,7 +40,6 @@ LEARN_RATE = 1e-3
 MULTIPLIER = 0.1
 reduce_learning_interval = 1000
 EPSILON = 1e-3
-
 
 CHECK_INTERVAL = 1000
 
@@ -190,8 +189,8 @@ def train( num_epochs , rep_interval):
                 sess.run( reduce_learning_rate )
                 print("reducing learning rate")
                 
-            if train_iteration % 10 == 0 :
-               
+            if train_iteration % 100 == 0 :
+                
                 print( "loss:{}".format(loss)  )
                
                 print( "step-training:{}".format( train_iteration ) )
@@ -206,7 +205,7 @@ def train( num_epochs , rep_interval):
 def test( test_file ):
     # restore an generate test file
     string_to_file = "order_id, products\n"
-    modelfile = "../checkpoints/model.ckpt-100.meta"
+    modelfile = "../checkpoints/model.ckpt-20000.meta"
     with tf.Session() as sess:
         
         sess.run( tf.global_variables_initializer() )
@@ -225,7 +224,7 @@ def test( test_file ):
         recuperado_last_rnn = tensors[0]
         recuperado_idd = tensors[1]
         
-        for i in range(0,100):
+        for i in range(0,NUM_ITER_TEST):
 
             
             prediction , idd = sess.run( [ recuperado_last_rnn , recuperado_idd ] )
@@ -234,7 +233,8 @@ def test( test_file ):
             for r in result:
                 string_to_file += r
 
-            
+            if i % 500 == 0:
+                print( "step:{}".format(i) )
             # prediction [Batch_size , N]
             # ids [ Batch_size]
             
@@ -253,7 +253,7 @@ def main( unuser_args):
 
     train(NUM_ITER , REP_INTERVAL)
 
-    test( "./sub.txt")
+    test( "./sub-20000.txt")
     
     print("riko -train ")
 
