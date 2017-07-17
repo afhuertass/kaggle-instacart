@@ -25,7 +25,7 @@ TB_DIR = "../tensorboard"
 
 # total train objects = 50000
 n = 100 # actual number of runnings over all the training data 
-NUM_ITER = 10
+NUM_ITER = 5
 
 NUM_ITER = (100000/BATCH_SIZE)*n  # numero the training epochs 
 NUM_ITER_TEST = (75000/BATCH_SIZE)*1 # para obtener las prediciones
