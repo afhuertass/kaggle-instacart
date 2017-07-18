@@ -27,8 +27,8 @@ TB_DIR = "../tensorboard"
 n = 100 # actual number of runnings over all the training data 
 NUM_ITER = 5
 
-NUM_ITER = (100000/BATCH_SIZE)*n  # numero the training epochs 
-NUM_ITER_TEST = (75000/BATCH_SIZE)*1 # para obtener las prediciones
+NUM_ITER = 5  # numero the training epochs 
+NUM_ITER_TEST = 1 # para obtener las prediciones
 
 #test delete for training
 #NUM_ITER = 100
@@ -74,7 +74,10 @@ def run_model2( dnc_core , initial_state  , inputs_sequence , seqlen  , output_s
 def train( num_epochs , rep_interval):
 
     
-    ## create the dnc_core 
+    ## create the dnc_core
+    total_steps = num_epochs*(100000)/BATCH_SIZE
+
+    total_steps = 10 
     dnc_core = dnc.DNC( access_config = access_config , controller_config  = controller_config , output_size = OUTPUT_SIZE )
     
     initial_state = dnc_core.initial_state(BATCH_SIZE)
@@ -141,7 +144,7 @@ def train( num_epochs , rep_interval):
 
 
     
-    saver = tf.train.Saver()
+    saver = tf.train.Saver( )
     tf.summary.scalar( 'loss' , train_loss  )
 
     merged_op = tf.summary.merge_all()
@@ -174,7 +177,7 @@ def train( num_epochs , rep_interval):
 
         print("start:{}".format( start_iteration ) )
         
-        for train_iteration in xrange(start_iteration , num_epochs):
+        for train_iteration in xrange(start_iteration , total_steps ):
 
             #t =  sess.run( input_tensors[0] ) # feats
             # training step 
