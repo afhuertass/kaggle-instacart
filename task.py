@@ -76,8 +76,8 @@ def train( num_epochs , rep_interval):
     
     ## create the dnc_core
     total_steps = num_epochs*(100000)/BATCH_SIZE
-
-    total_steps = 10 
+    print("TOTAL STEPS:{}".format(total_steps ))
+    #total_steps = 10 
     dnc_core = dnc.DNC( access_config = access_config , controller_config  = controller_config , output_size = OUTPUT_SIZE )
     
     initial_state = dnc_core.initial_state(BATCH_SIZE)
@@ -181,8 +181,6 @@ def train( num_epochs , rep_interval):
 
             #t =  sess.run( input_tensors[0] ) # feats
             # training step
-            inpp = sess.run(  input_tensors[0] )
-            print(inpp)
             _ , loss = sess.run( [ train_step , train_loss] )
             
             if train_iteration % 100 == 0 :
@@ -198,7 +196,7 @@ def train( num_epochs , rep_interval):
                 
                 print( "loss:{}".format(loss)  )
                
-                print( "step-training:{}".format( train_iteration ) )
+            print( "step-training:{}/{}".format( train_iteration, total_steps ) )
             
            
 
@@ -228,8 +226,8 @@ def test( test_file ):
 
         recuperado_last_rnn = tensors[0]
         recuperado_idd = tensors[1]
-        
-        for i in range(0, 10 ):
+        steps = 75000/50
+        for i in range(0, steps ):
 
             
             prediction , idd = sess.run( [ recuperado_last_rnn , recuperado_idd ] )
@@ -239,7 +237,7 @@ def test( test_file ):
                 string_to_file += r
 
             #if i % 500 == 0:
-            print( "step test:{}".format(i) )
+            print( "step test:{}/{}".format(i , steps ) )
             # prediction [Batch_size , N]
             # ids [ Batch_size]
             
@@ -256,7 +254,7 @@ def test( test_file ):
     
 def main( unuser_args):
 
-    train(NUM_ITER , REP_INTERVAL)
+    train( 2 , REP_INTERVAL)
 
     test( "./sub-32000.txt")
     
