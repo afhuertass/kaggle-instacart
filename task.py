@@ -182,7 +182,7 @@ def train( num_epochs , rep_interval):
             #t =  sess.run( input_tensors[0] ) # feats
             # training step 
             _ , loss = sess.run( [ train_step , train_loss] )
-            break 
+             
             if train_iteration % 100 == 0 :
                 summary  = sess.run( merged_op  )
                 writer.add_summary(summary , train_iteration )
