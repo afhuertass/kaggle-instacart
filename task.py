@@ -85,7 +85,7 @@ def train( num_epochs , rep_interval):
     input_tensors = input_data(PATH_TRAIN_DATA , num_epochs )
 
     # load the test data
-    input_tensors_test = input_data(PATH_TEST_DATA , NUM_ITER_TEST ) # una sola pasada 
+    input_tensors_test = input_data(PATH_TEST_DATA , 1 ) # una sola pasada 
     
     output_sequence = run_model2( dnc_core , initial_state , input_tensors[0] , input_tensors[3] , OUTPUT_SIZE  )
 
@@ -179,7 +179,7 @@ def train( num_epochs , rep_interval):
             #t =  sess.run( input_tensors[0] ) # feats
             # training step 
             _ , loss = sess.run( [ train_step , train_loss] )
-            
+            break 
             if train_iteration % 100 == 0 :
                 summary  = sess.run( merged_op  )
                 writer.add_summary(summary , train_iteration )
@@ -205,7 +205,7 @@ def train( num_epochs , rep_interval):
 def test( test_file ):
     # restore an generate test file
     string_to_file = "order_id, products\n"
-    modelfile = "../checkpoints/model.ckpt-20000.meta"
+    modelfile = "../checkpoints/model.ckpt-30000.meta"
     with tf.Session() as sess:
         
         sess.run( tf.global_variables_initializer() )
@@ -224,17 +224,17 @@ def test( test_file ):
         recuperado_last_rnn = tensors[0]
         recuperado_idd = tensors[1]
         
-        for i in range(0,NUM_ITER_TEST):
+        for i in range(0, 10 ):
 
             
             prediction , idd = sess.run( [ recuperado_last_rnn , recuperado_idd ] )
-
+	    
             result = util.human( prediction , idd )
             for r in result:
                 string_to_file += r
 
-            if i % 500 == 0:
-                print( "step:{}".format(i) )
+            #if i % 500 == 0:
+            print( "step test:{}".format(i) )
             # prediction [Batch_size , N]
             # ids [ Batch_size]
             
@@ -253,7 +253,7 @@ def main( unuser_args):
 
     train(NUM_ITER , REP_INTERVAL)
 
-    test( "./sub-20000.txt")
+    test( "./sub-32000.txt")
     
     print("riko -train ")
 
