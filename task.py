@@ -180,9 +180,11 @@ def train( num_epochs , rep_interval):
         for train_iteration in xrange(start_iteration , total_steps ):
 
             #t =  sess.run( input_tensors[0] ) # feats
-            # training step 
+            # training step
+            inpp = sess.run(  input_tensors[0] )
+            print(inpp)
             _ , loss = sess.run( [ train_step , train_loss] )
-             
+            
             if train_iteration % 100 == 0 :
                 summary  = sess.run( merged_op  )
                 writer.add_summary(summary , train_iteration )
