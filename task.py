@@ -208,7 +208,7 @@ def train( num_epochs , rep_interval):
 def test( test_file ):
     # restore an generate test file
     string_to_file = "order_id, products\n"
-    modelfile = "../checkpoints/model.ckpt-30000.meta"
+    modelfile = "../checkpoints/model.ckpt-10.meta"
     with tf.Session() as sess:
         
         sess.run( tf.global_variables_initializer() )
