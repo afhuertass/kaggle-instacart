@@ -81,6 +81,7 @@ class DNC( snt.RNNCore ):
 
         output = snt.Linear( output_size = self._output_size.as_list()[0] , name = "linear_output" )(output)
 
+        output = tf.sigmoid( output )
         output = self.clip_output( output )
         
         return output , DNCState(

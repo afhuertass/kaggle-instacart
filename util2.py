@@ -29,7 +29,7 @@ def human( p , ids  ):
   # we then the index of the
   
   for x in np.arange(0 , p.shape[0]):
-    mask = p[x][:] > 0.3
+    mask = p[x][:] > 0.9
     elements = np.nonzero( mask )
     idd = str(ids[x][0]) + ", "
     
