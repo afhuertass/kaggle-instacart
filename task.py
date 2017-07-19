@@ -19,7 +19,7 @@ PATH_TRAIN_DATA = [ "../data/train.pb2" , "../data/train2.pb2" ]
 PATH_TEST_DATA = ["../data/test.pb2" ]
 
 PATH_PRODUCTS = "gs://kaggleun-instacart/data/products/products.csv"
-CHECK_DIR = "../checkpoints"
+CHECK_DIR = "../checkpoints-2"
 TB_DIR = "../tensorboard"
 
 
@@ -37,9 +37,9 @@ NUM_ITER_TEST = 1 # para obtener las prediciones
 REP_INTERVAL = 100 
 MAX_GRAD_NORM = 50
 LEARN_RATE = 1e-3
-MULTIPLIER = 0.1
+MULTIPLIER = 1
 reduce_learning_interval = 1000
-EPSILON = 1e-3
+EPSILON = 1e-4
 
 CHECK_INTERVAL = 1000
 
