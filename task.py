@@ -233,7 +233,7 @@ def test( test_file ):
             prediction , idd = sess.run( [ recuperado_last_rnn , recuperado_idd ] )
 
             print( idd.shape )
-            print ( idd[:5]
+            print ( idd[:5] ) 
             result = util.human( prediction , idd )
             for r in result:
                 string_to_file += r
