@@ -253,7 +253,7 @@ def test( test_file ):
     
 def main( unuser_args):
 
-    train( 10 , REP_INTERVAL)
+    train( 20 , REP_INTERVAL)
 
     test( "./sub-32000.txt")
     
