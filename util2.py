@@ -29,7 +29,7 @@ def human( p , ids  ):
   # we then the index of the
   
   for x in np.arange(0 , p.shape[0]):
-    mask = p[x][:] > 0.6
+    mask = p[x][:] > 0.4
     elements = np.nonzero( mask )
     idd = str(ids[x][0]) + ", "
     
@@ -40,7 +40,7 @@ def human( p , ids  ):
     if resp == "":
       resp = "None"
 
-    print ( idd + resp + "\n"  )
+    
     yield (idd + resp + "\n")
   
   
