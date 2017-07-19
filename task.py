@@ -227,13 +227,10 @@ def test( test_file ):
         recuperado_last_rnn = tensors[0]
         recuperado_idd = tensors[1]
         steps = 75000/50
+        
         for i in range(0, steps ):
 
-            
             prediction , idd = sess.run( [ recuperado_last_rnn , recuperado_idd ] )
-
-            print( idd.shape )
-            print ( idd[:5] ) 
             result = util.human( prediction , idd )
             for r in result:
                 string_to_file += r
