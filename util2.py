@@ -1,3 +1,4 @@
+
 # Copyright 2017 Google Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -29,9 +30,9 @@ def human( p , ids  ):
   # we then the index of the
   
   for x in np.arange(0 , p.shape[0]):
-    mask = p[x][:] > 0.9
+    mask = p[x][:] > 0.4
     elements = np.nonzero( mask )
-    idd = str(ids[x][0]) + ", "
+    idd = str(ids[x][0]) + ","
     
     resp = ""
     for element in elements[0]:
