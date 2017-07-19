@@ -161,9 +161,9 @@ class DataInstacart(snt.AbstractModule):
             [feature,target , idd  , seqlen ] ,
             batch_size = self.batch_size  ,
             capacity = capacity ,
-            min_after_dequeue =  min_after_dequeue
+            
         )
-
+        #min_after_dequeue =  min_after_dequeue
         print("waaaaaaaaaaaaaaaaaa")
         print( self.batch_size )
         print(result[0].shape)
