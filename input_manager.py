@@ -155,8 +155,9 @@ class DataInstacart(snt.AbstractModule):
         print( feature.shape )
         print( target.shape  )
         
-        # of change to a shuffle batch 
-        result = tf.train.shuffle_batch(
+        # of change to a shuffle batch
+        # change to batch for testing
+        result = tf.train.batch(
             [feature,target , idd  , seqlen ] ,
             batch_size = self.batch_size  ,
             capacity = capacity ,
