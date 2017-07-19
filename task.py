@@ -208,7 +208,7 @@ def train( num_epochs , rep_interval):
 def test( test_file ):
     # restore an generate test file
     string_to_file = "order_id, products\n"
-    modelfile = "../checkpoints/model.ckpt-10.meta"
+    modelfile = "../checkpoints/model.ckpt-4000.meta"
     with tf.Session() as sess:
         
         sess.run( tf.global_variables_initializer() )
@@ -254,7 +254,7 @@ def test( test_file ):
     
 def main( unuser_args):
 
-    train( 2 , REP_INTERVAL)
+    train( 10 , REP_INTERVAL)
 
     test( "./sub-32000.txt")
     
