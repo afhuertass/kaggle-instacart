@@ -41,7 +41,8 @@ def human( p , ids  ):
       
     if resp == "":
       resp = "None"
-      
+
+    print ( idd + resp + "\n"  )
     yield (idd + resp + "\n")
   
   
