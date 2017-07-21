@@ -211,6 +211,8 @@ def test( test_file ):
     # restore an generate test file
     string_to_file = "order_id,products\n"
     modelfile = "../checkpoints-2/model.ckpt-40000.meta"
+
+    all_ids = [] 
     with tf.Session() as sess:
         
         sess.run( tf.global_variables_initializer() )
@@ -235,6 +237,7 @@ def test( test_file ):
         return 
         while not i >= 20 :
             prediction , idd = sess.run( [ recuperado_last_rnn , recuperado_idd ] )
+            all_ids.append( idd )
             
             print( idd[0][0] )
             result = util.human( prediction , idd )
@@ -250,7 +253,16 @@ def test( test_file ):
     test = open(test_file , 'w')
     test.write( string_to_file )
     test.close()
-        
+
+    test2 = open("./ids" , 'w')
+    cc = ""
+    for idd in all_ids:
+
+        for x in np.arange( 0 , idd.shape[0]) :
+            cc += str( idd[x][0 ]) + "\n"
+
+    test2.write( cc )
+    test2.close()
     
 def main( unuser_args):
 
