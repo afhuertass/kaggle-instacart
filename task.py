@@ -84,7 +84,7 @@ def train( num_epochs , rep_interval):
 
     #load the data
     input_data = input_manager.DataInstacart( PATH_PRODUCTS, BATCH_SIZE  )
-    input_data_test = input_manager.DataInstacart( PATH_PRODUCTS , BATCH_SIZE )
+    input_data_test = input_manager.DataInstacart( PATH_PRODUCTS , 100 )
 
     
     input_tensors = input_data(PATH_TRAIN_DATA , num_epochs ) # training input 
@@ -173,6 +173,7 @@ def train( num_epochs , rep_interval):
     with tf.train.SingularMonitoredSession( hooks = hooks , checkpoint_dir = CHECK_DIR , config = config ) as sess:
 
         writer = tf.summary.FileWriter( TB_DIR , sess.graph )
+        sess.run(tf.local_variables_initializer())
         
         start_iteration = sess.run(global_step)
         total_loss = 0
