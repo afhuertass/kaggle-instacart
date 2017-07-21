@@ -140,13 +140,13 @@ class DataInstacart(snt.AbstractModule):
         queue_size_multiplier = thread_count + 3
         capacity = self.batch_size*5
         
-        filename_queue = tf.train.string_input_producer(   data_files , shuffle=False, num_epochs = num_epochs   )
+        filename_queue = tf.train.string_input_producer(   data_files , shuffle=False, num_epochs = None   )
         
         _ , encoded_examples = tf.TFRecordReader(
             options = tf.python_io.TFRecordOptions  (
                 compression_type= TFRecordCompressionType.GZIP
             )
-        ).read_up_to( filename_queue , self.batch_size)
+        ).read( filename_queue )
 
 
         #features, target = parse_examples( encoded_examples )
