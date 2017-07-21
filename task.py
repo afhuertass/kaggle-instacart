@@ -227,25 +227,26 @@ def test( test_file ):
         recuperado_last_rnn = tensors[0]
         recuperado_idd = tensors[1]
         steps = 1000/50
-        
-        for i in range(0, steps ):
 
-            prediction , idd = sess.run( [ recuperado_last_rnn , recuperado_idd ] )
-            result = util.human( prediction , idd )
-            for r in result:
-                string_to_file += r
 
-            #if i % 500 == 0:
-            print( "step test:{}/{}".format(i , steps ) )
-            # prediction [Batch_size , N]
-            # ids [ Batch_size]
+        try: 
+            while not coord.should_stop():
+                prediction , idd = sess.run( [ recuperado_last_rnn , recuperado_idd ] )
+                result = util.human( prediction , idd )
+                for r in result:
+                    string_to_file += r
+                    
+                    
+                print( "step test:{}/{}".format(i , steps ) )
+        except tf.errors.OutOfRangeError:
             
-            
-        # session restored
+            print("Queue Exhausted")
 
-        coord.request_stop()
-        coord.join( threads )
-        
+        finally:
+            coord.request_stop()
+            coord.join(threads)
+
+
     test = open(test_file , 'w')
     test.write( string_to_file )
     test.close()
