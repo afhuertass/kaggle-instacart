@@ -225,15 +225,17 @@ def test( test_file ):
         threads = tf.train.start_queue_runners(sess= sess, coord= coord)
 
         tensors = tf.get_collection('outputs_test')
-
+        print( tensors )
+        
         recuperado_last_rnn = tensors[0]
         recuperado_idd = tensors[1]
         steps = 1000/50
 
         i = 0
-      
+        return 
         while not i >= 20 :
             prediction , idd = sess.run( [ recuperado_last_rnn , recuperado_idd ] )
+            
             print( idd[0][0] )
             result = util.human( prediction , idd )
             for r in result:
