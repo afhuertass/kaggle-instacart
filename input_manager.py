@@ -124,7 +124,10 @@ class DataInstacart(snt.AbstractModule):
         #self.df_products = self.df_products_c['product_id']
         self.df_products = np.arange( 1 , 49690)
         # lista de productos 
-            
+
+    def set_batch_size(self , new_batch):
+        self.batch_size = new_batch
+        
     def _build(self, data_files , num_epochs ):
         # recieves the data files where the .tfrecord lies.
         # so it build the queue to read from the files and retrieve the data tensors
@@ -137,7 +140,7 @@ class DataInstacart(snt.AbstractModule):
         queue_size_multiplier = thread_count + 3
         capacity = self.batch_size*5
         
-        filename_queue = tf.train.string_input_producer(   data_files , shuffle=False  )
+        filename_queue = tf.train.string_input_producer(   data_files , shuffle=False , num_epochs = 1  )
         
         _ , encoded_examples = tf.TFRecordReader(
             options = tf.python_io.TFRecordOptions  (
