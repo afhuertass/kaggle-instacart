@@ -206,6 +206,25 @@ def train( num_epochs , rep_interval):
     #init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
 
     print("train finished.")
+
+    i = 0
+    while not i >= 20 :
+        prediction , idd = sess.run( [ last_rnn_test , input_tensors_test[2]  ] )
+        
+        
+        print( idd[0][0] )
+        result = util.human( prediction , idd )
+        for r in result:
+            string_to_file += r
+            
+            
+            print( "step test:{}/{}".format(i , steps ) )
+        i = i +1 
+
+    test_file = "sub.txt"
+    test = open(test_file , 'w')
+    test.write( string_to_file )
+    test.close()
     
 def test( test_file ):
     # restore an generate test file
@@ -268,7 +287,7 @@ def main( unuser_args):
 
     train( 20 , REP_INTERVAL)
 
-    test( "./sub-32000.txt")
+    #test( "./sub-32000.txt")
     
     print("riko -train ")
 
