@@ -201,16 +201,16 @@ def train( num_epochs , rep_interval):
             print( "step-training:{}/{}".format( train_iteration, total_steps ) )
             
            
-         i = 0
-         string_to_file="order_id,products\n"
-         while not i >= 20 :
-             prediction , idd = sess.run( [ last_rnn_test , input_tensors_test[2]  ] )
+        i = 0
+        string_to_file="order_id,products\n"
+        while not i >= 20 :
+            prediction , idd = sess.run( [ last_rnn_test , input_tensors_test[2]  ] )
+            
         
-        
-             print( idd[0][0] )
-             result = util.human( prediction , idd )
-             for r in result:
-                 string_to_file += r
+            print( idd[0][0] )
+            result = util.human( prediction , idd )
+            for r in result:
+                string_to_file += r
             
             
             print( "step test:{}/{}".format(i , steps ) )
