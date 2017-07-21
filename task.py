@@ -12,7 +12,7 @@ import util2 as util
 
 # 49688
 OUTPUT_SIZE = 49690
-BATCH_SIZE =  100
+BATCH_SIZE =  50
 
 
 PATH_TRAIN_DATA = [ "../data/train.pb2" , "../data/train2.pb2" ]
