@@ -230,7 +230,7 @@ def test( test_file ):
 
         i = 0
         try: 
-            while not coord.should_stop():
+            while not i >= 20 :
                 prediction , idd = sess.run( [ recuperado_last_rnn , recuperado_idd ] )
                 result = util.human( prediction , idd )
                 for r in result:
