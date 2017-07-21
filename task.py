@@ -84,11 +84,13 @@ def train( num_epochs , rep_interval):
 
     #load the data
     input_data = input_manager.DataInstacart( PATH_PRODUCTS, BATCH_SIZE  )
+    input_data_test = input_manager.DataInstacart( PATH_PRODUCTS , BATCH_SIZE )
+
     
-    input_tensors = input_data(PATH_TRAIN_DATA , num_epochs )
+    input_tensors = input_data(PATH_TRAIN_DATA , num_epochs ) # training input 
 
     # load the test data
-    input_tensors_test = input_data(PATH_TEST_DATA , 1 ) # una sola pasada 
+    input_tensors_test = input_data_test(PATH_TEST_DATA , 1 ) # una sola pasada 
     
     output_sequence = run_model2( dnc_core , initial_state , input_tensors[0] , input_tensors[3] , OUTPUT_SIZE  )
 
