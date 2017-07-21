@@ -234,7 +234,7 @@ def test( test_file ):
         steps = 1000/50
 
         i = 0
-        return 
+       
         while not i >= 20 :
             prediction , idd = sess.run( [ recuperado_last_rnn , recuperado_idd ] )
             all_ids.append( idd )
@@ -254,7 +254,7 @@ def test( test_file ):
     test.write( string_to_file )
     test.close()
 
-    test2 = open("./ids" , 'w')
+    test2 = open("./ids.txt" , 'w')
     cc = ""
     for idd in all_ids:
 
