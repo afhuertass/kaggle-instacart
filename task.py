@@ -173,7 +173,7 @@ def train( num_epochs , rep_interval):
     with tf.train.SingularMonitoredSession( hooks = hooks , checkpoint_dir = CHECK_DIR , config = config ) as sess:
 
         writer = tf.summary.FileWriter( TB_DIR , sess.graph )
-        sess.run(tf.local_variables_initializer())
+       
         
         start_iteration = sess.run(global_step)
         total_loss = 0
