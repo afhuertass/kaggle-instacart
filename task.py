@@ -16,7 +16,7 @@ BATCH_SIZE =  50
 
 
 PATH_TRAIN_DATA = [ "../data/train.pb2" , "../data/train2.pb2" ]
-PATH_TEST_DATA = ["../data/test.pb2" ]
+PATH_TEST_DATA = ["../data/test_set.pb2" ]
 
 PATH_PRODUCTS = "gs://kaggleun-instacart/data/products/products.csv"
 CHECK_DIR = "../checkpoints-2"
@@ -226,7 +226,7 @@ def test( test_file ):
 
         recuperado_last_rnn = tensors[0]
         recuperado_idd = tensors[1]
-        steps = 75000/50
+        steps = 1000/50
         
         for i in range(0, steps ):
 
