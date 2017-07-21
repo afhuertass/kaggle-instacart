@@ -200,23 +200,28 @@ def train( num_epochs , rep_interval):
                
             print( "step-training:{}/{}".format( train_iteration, total_steps ) )
             
-           
+
+       
         i = 0
         string_to_file="order_id,products\n"
         steps = 1000/50
-        while not i >= 20 :
-            prediction , idd = sess.run( [ last_rnn_test , input_tensors_test[2]  ] )
+        try:
+            while not i >= 20 :
+                prediction , idd = sess.run( [ last_rnn_test , input_tensors_test[2]  ] )
+                
+                
+                print( idd[0][0] )
+                result = util.human( prediction , idd )
+                for r in result:
+                    string_to_file += r
             
-        
-            print( idd[0][0] )
-            result = util.human( prediction , idd )
-            for r in result:
-                string_to_file += r
             
-            
-            print( "step test:{}/{}".format(i , steps ) )
-            i = i +1 
+                print( "step test:{}/{}".format(i , steps ) )
+                i = i +1 
 
+        except tf.errors.OutOfRangeError:
+            print("Queue dead ")
+            
         test_file = "sub.txt"
         test = open(test_file , 'w')
         test.write( string_to_file )
