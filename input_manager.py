@@ -146,7 +146,7 @@ class DataInstacart(snt.AbstractModule):
             options = tf.python_io.TFRecordOptions  (
                 compression_type= TFRecordCompressionType.GZIP
             )
-        ).read( filename_queue )
+        ).read_up_to( filename_queue , self.batch_size )
 
 
         #features, target = parse_examples( encoded_examples )
