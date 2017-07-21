@@ -203,6 +203,7 @@ def train( num_epochs , rep_interval):
            
         i = 0
         string_to_file="order_id,products\n"
+        steps = 1000/50
         while not i >= 20 :
             prediction , idd = sess.run( [ last_rnn_test , input_tensors_test[2]  ] )
             
