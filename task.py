@@ -229,23 +229,17 @@ def test( test_file ):
         steps = 1000/50
 
         i = 0
-        try: 
-            while not i >= 20 :
-                prediction , idd = sess.run( [ recuperado_last_rnn , recuperado_idd ] )
-                result = util.human( prediction , idd )
-                for r in result:
-                    string_to_file += r
-                    
-                    
-                print( "step test:{}/{}".format(i , steps ) )
-                i = i +1 
-        except tf.errors.OutOfRangeError:
-            
-            print("Queue Exhausted")
-
-        finally:
-            coord.request_stop()
-            coord.join(threads)
+      
+        while not i >= 20 :
+            prediction , idd = sess.run( [ recuperado_last_rnn , recuperado_idd ] )
+            result = util.human( prediction , idd )
+            for r in result:
+                string_to_file += r
+                
+                
+            print( "step test:{}/{}".format(i , steps ) )
+            i = i +1 
+     
 
 
     test = open(test_file , 'w')
