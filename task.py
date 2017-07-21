@@ -228,7 +228,7 @@ def test( test_file ):
         recuperado_idd = tensors[1]
         steps = 1000/50
 
-
+        i = 0
         try: 
             while not coord.should_stop():
                 prediction , idd = sess.run( [ recuperado_last_rnn , recuperado_idd ] )
@@ -238,6 +238,7 @@ def test( test_file ):
                     
                     
                 print( "step test:{}/{}".format(i , steps ) )
+                i = i +1 
         except tf.errors.OutOfRangeError:
             
             print("Queue Exhausted")
