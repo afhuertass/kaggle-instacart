@@ -84,7 +84,7 @@ def train( num_epochs , rep_interval):
 
     #load the data
     input_data = input_manager.DataInstacart( PATH_PRODUCTS, BATCH_SIZE  )
-    input_data_test = input_manager.DataInstacart( PATH_PRODUCTS , 100 )
+    input_data_test = input_manager.DataInstacart( PATH_PRODUCTS , 50 )
 
     
     input_tensors = input_data(PATH_TRAIN_DATA , num_epochs ) # training input 
