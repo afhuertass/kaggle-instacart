@@ -136,9 +136,9 @@ class DataInstacart(snt.AbstractModule):
         # build the shit
         print(data_files)
         thread_count = multiprocessing.cpu_count()
-        min_after_dequeue = 1
+        min_after_dequeue = 1000
         queue_size_multiplier = thread_count + 3
-        capacity = 1000
+        capacity = 1000 + batch_size*3 
         
         filename_queue = tf.train.string_input_producer(   data_files , shuffle=False   )
         
@@ -164,9 +164,7 @@ class DataInstacart(snt.AbstractModule):
             [feature,target , idd  , seqlen ] ,
             batch_size = self.batch_size  ,
             capacity = capacity ,
-            min_after_dequeue =500
-            
-
+            min_after_dequeue = 1000 
         )
         #min_after_dequeue =  min_after_dequeue
         print("waaaaaaaaaaaaaaaaaa")
