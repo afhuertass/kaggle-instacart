@@ -232,7 +232,7 @@ def train( num_epochs , rep_interval):
         string_to_file="order_id,products\n"
         
         try:
-            while True :
+            for i in np.arange(0,steps_test) :
                 prediction , idd = sess.run( [ last_rnn_test , input_tensors_test[2]  ] )
 
                 result = util.human( prediction , idd )
