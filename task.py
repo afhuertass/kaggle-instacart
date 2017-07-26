@@ -15,7 +15,7 @@ import util2 as util
 # 49688
 OUTPUT_SIZE = 49690
 BATCH_SIZE =  100
-
+LEN = 150 
 
 
 PATH_TRAIN_DATA = [ "../data/train.pb2" ]
@@ -65,11 +65,12 @@ controller_config = {
 def run_model2( dnc_core , initial_state  , inputs_sequence , seqlen  , output_size ):
 
 
+    input_sequence = tf.reshape( inputs_sequence , shape= [ LEN , BATCH_SIZE , 1  ]  )
     output_sequence , _ = tf.nn.dynamic_rnn(
         cell = dnc_core ,
         inputs = inputs_sequence ,
         sequence_length= seqlen,
-        time_major = False ,
+        time_major = True ,
         initial_state = initial_state 
     )
 
