@@ -73,7 +73,7 @@ class InputManager():
         target = tf.one_hot( sparse_target_indices , TOTAL_ITEMS, on_value=1.0 , off_value = 0.0 )
 
         target = tf.reduce_sum(target , 0 )
-        target = tf.reshape( target , [ -1 ,TOTAL_ITEMS ] )
+        target = tf.reshape( target , [ TOTAL_ITEMS ] )
         
         sparse_feature_indices = tf.reshape( parsed['feature'].values[:LEN] , shape= [LEN])
 
