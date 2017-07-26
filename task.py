@@ -67,12 +67,14 @@ def run_model2( dnc_core , initial_state  , inputs_sequence , seqlen  , output_s
 
     
     print("wtf men")
+    inputs_sequence = tf.reshape( inputs_sequence , shape=[LEN, BATCH_SIZE , 1] )
     print( inputs_sequence.shape )
+    
     output_sequence , _ = tf.nn.dynamic_rnn(
         cell = dnc_core ,
         inputs = inputs_sequence ,
         sequence_length= seqlen,
-        time_major = False ,
+        time_major = True ,
         initial_state = initial_state 
     )
     
@@ -126,7 +128,7 @@ def train( num_epochs , rep_interval):
     train_loss = util.cost(  last_rnn , input_tensors[1] )
     print("sheips")
     print( last_rnn.shape )
-    return 
+    
     #eval_loss = input_data.cost_f1( last_rnn , input_tensors[1] )
     
     
