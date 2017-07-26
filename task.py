@@ -240,7 +240,7 @@ def train( num_epochs , rep_interval):
                     string_to_file += r
             
             
-                print( "step test, samples:{}/{}".format( i*100 , 75000 ) )
+                print( "step test, samples:{}/{}".format( i*BATCH_SIZE , 75000 ) )
                 i = i +1 
 
         except tf.errors.OutOfRangeError:
@@ -316,7 +316,7 @@ def test( test_file ):
     
 def main( unuser_args):
 
-    train( 10 , REP_INTERVAL)
+    train( 20000 , REP_INTERVAL)
 
     #test( "./sub-32000.txt")
     
