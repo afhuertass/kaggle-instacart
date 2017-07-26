@@ -79,11 +79,13 @@ class InputManager():
 
         seqlen = tf.count_nonzero(  sparse_feature_indices   )
         
-        features = tf.reshape( sparse_feature_indices , shape = [ LEN , 1  ]  )
+        features = tf.reshape( sparse_feature_indices , shape = [ LEN  ]  )
         features = tf.cast( features , tf.float32 )
 
         print("shape features")
-       
+        print( features.shape)
+        print( target.shape )
+        
         
         return features , target , idd , seqlen 
         
