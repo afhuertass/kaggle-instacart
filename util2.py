@@ -43,7 +43,27 @@ def human( p , ids  ):
 
     
     yield (idd + resp + "\n")
+
+
+           
+def cost( last_output , target ):
+    # last output [ batch_size , ToT ]
+    # target [ batch_size , TOT ]
+
+    # sigmoid cross entropy, because the classes arent mutially exclusive
+
   
+  xent = tf.nn.sigmoid_cross_entropy_with_logits( logits = last_output , labels = target )
+  xent_batch = tf.reduce_mean( xent , axis = 1)
+  
+  batch_size = tf.cast(tf.shape(last_output)[0], dtype=xent_batch.dtype)
+        
+  xent_total = tf.reduce_sum( xent_batch ) / batch_size
+  
+  print(  xent_total.shape ) 
+  return  xent_total
+
+
   
 def batch_invert_permutation(permutations):
   """Returns batched `tf.invert_permutation` for every row in `permutations`."""

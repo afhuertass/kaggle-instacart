@@ -120,7 +120,7 @@ def train( num_epochs , rep_interval):
     tf.add_to_collection('outputs_test', last_rnn_test )
     tf.add_to_collection('outputs_test', input_tensors_test[2] )
     
-    train_loss = input_data.cost(  last_rnn , input_tensors[1] )
+    train_loss = util.cost(  last_rnn , input_tensors[1] )
 
     #eval_loss = input_data.cost_f1( last_rnn , input_tensors[1] )
     
