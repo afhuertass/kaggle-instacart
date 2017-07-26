@@ -8,6 +8,8 @@ import sys
 
 import dnc
 import input_manager
+import input_manager2 as im
+
 import util2 as util
 
 # 49688
@@ -15,11 +17,12 @@ OUTPUT_SIZE = 49690
 BATCH_SIZE =  50
 
 
-PATH_TRAIN_DATA = [ "../data/train.pb2" , "../data/train2.pb2" ]
+PATH_TRAIN_DATA = [ "../data/train.pb2" ]
+
 PATH_TEST_DATA = ["../data/test_set.pb2" ]
 
 PATH_PRODUCTS = "gs://kaggleun-instacart/data/products/products.csv"
-CHECK_DIR = "../checkpoints-2"
+CHECK_DIR = "../checkpoints-3"
 TB_DIR = "../tensorboard"
 
 
@@ -52,7 +55,7 @@ access_config = {
         'w_size' : 64 
     }
 controller_config = {
-        'num_hidden'  : 8 ,
+        'num_hidden'  : 16 ,
         'depth' : 2 ,
         'output_size' : OUTPUT_SIZE
     }
@@ -65,7 +68,7 @@ def run_model2( dnc_core , initial_state  , inputs_sequence , seqlen  , output_s
         cell = dnc_core ,
         inputs = inputs_sequence ,
         sequence_length= seqlen,
-        time_major = True ,
+        time_major = False ,
         initial_state = initial_state 
     )
 
@@ -75,7 +78,9 @@ def train( num_epochs , rep_interval):
 
     
     ## create the dnc_core
-    total_steps = num_epochs*(100000)/BATCH_SIZE
+    total_steps = num_epochs
+    steps_test = 75000/BATCH_SIZE
+    
     print("TOTAL STEPS:{}".format(total_steps ))
     #total_steps = 10 
     dnc_core = dnc.DNC( access_config = access_config , controller_config  = controller_config , output_size = OUTPUT_SIZE )
@@ -83,14 +88,22 @@ def train( num_epochs , rep_interval):
     initial_state = dnc_core.initial_state(BATCH_SIZE)
 
     #load the data
-    input_data = input_manager.DataInstacart( PATH_PRODUCTS, BATCH_SIZE  )
-    input_data_test = input_manager.DataInstacart( PATH_PRODUCTS ,BATCH_SIZE )
+    #input_data = input_manager.DataInstacart( PATH_PRODUCTS, BATCH_SIZE  )
+    #input_data_test = input_manager.DataInstacart( PATH_PRODUCTS ,BATCH_SIZE )
+
+    input_data_train = im.InputManager( batch_size , PATH_TRAIN_DATA[0] )
+    input_data_test = im.InputManager( batch_size , PATH_TEST_DATA[0] , 1 )
+
+    interator_train = input_data_train.data.make_initializable_iterator()
+    iterator_test = input_data_test.data.make_initializable_iterator()
 
     
-    input_tensors = input_data(PATH_TRAIN_DATA , num_epochs ) # training input 
+    #input_tensors = input_data(PATH_TRAIN_DATA , num_epochs ) # training input 
+    #input_tensors_test = input_data_test(PATH_TEST_DATA , 50 )
 
-    # load the test data
-    input_tensors_test = input_data_test(PATH_TEST_DATA , 50 ) # una sola pasada 
+    input_tensors = iterator_train.get_next()
+    input_tensors_test = iterator_test.get_next()
+    
     
     output_sequence = run_model2( dnc_core , initial_state , input_tensors[0] , input_tensors[3] , OUTPUT_SIZE  )
 
@@ -176,6 +189,10 @@ def train( num_epochs , rep_interval):
        
         
         start_iteration = sess.run(global_step)
+        # initialize iterator
+        sess.run( iterator_train.initializer )
+        sess.run( iteratro_test.initializer )
+        
         total_loss = 0
 
         print("start:{}".format( start_iteration ) )
@@ -205,13 +222,11 @@ def train( num_epochs , rep_interval):
        
         i = 0
         string_to_file="order_id,products\n"
-        steps = 1000/50
+        
         try:
-            while not i >= 20 :
+            while not i >= steps_test :
                 prediction , idd = sess.run( [ last_rnn_test , input_tensors_test[2]  ] )
-                
-                
-                print( idd[0][0] )
+
                 result = util.human( prediction , idd )
                 for r in result:
                     string_to_file += r
