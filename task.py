@@ -67,7 +67,7 @@ def run_model2( dnc_core , initial_state  , inputs_sequence , seqlen  , output_s
 
     
     print("wtf men")
-    print( input_sequence.shape )
+    print( inputs_sequence.shape )
     output_sequence , _ = tf.nn.dynamic_rnn(
         cell = dnc_core ,
         inputs = inputs_sequence ,
