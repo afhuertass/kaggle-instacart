@@ -192,7 +192,7 @@ def train( num_epochs , rep_interval):
         start_iteration = sess.run(global_step)
         # initialize iterator
         sess.run( iterator_train.initializer )
-        sess.run( iteratro_test.initializer )
+        sess.run( iterator_test.initializer )
         
         total_loss = 0
 
