@@ -65,14 +65,14 @@ controller_config = {
 def run_model2( dnc_core , initial_state  , inputs_sequence , seqlen  , output_size ):
 
 
-    input_sequence = tf.reshape( inputs_sequence , shape= [ LEN , BATCH_SIZE , 1  ]  )
+    
     print("wtf men")
     print( input_sequence.shape )
     output_sequence , _ = tf.nn.dynamic_rnn(
         cell = dnc_core ,
         inputs = inputs_sequence ,
         sequence_length= seqlen,
-        time_major = True ,
+        time_major = False ,
         initial_state = initial_state 
     )
     
