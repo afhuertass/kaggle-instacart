@@ -14,7 +14,8 @@ import util2 as util
 
 # 49688
 OUTPUT_SIZE = 49690
-BATCH_SIZE =  50
+BATCH_SIZE =  128
+
 
 
 PATH_TRAIN_DATA = [ "../data/train.pb2" ]
@@ -92,7 +93,7 @@ def train( num_epochs , rep_interval):
     #input_data_test = input_manager.DataInstacart( PATH_PRODUCTS ,BATCH_SIZE )
 
     input_data_train = im.InputManager( batch_size , PATH_TRAIN_DATA[0] )
-    input_data_test = im.InputManager( batch_size , PATH_TEST_DATA[0] , 1 )
+    input_data_test = im.InputManager( 100 , PATH_TEST_DATA[0] , 1 )
 
     interator_train = input_data_train.data.make_initializable_iterator()
     iterator_test = input_data_test.data.make_initializable_iterator()
@@ -220,11 +221,11 @@ def train( num_epochs , rep_interval):
             
 
        
-        i = 0
+        i = 1
         string_to_file="order_id,products\n"
         
         try:
-            while not i >= steps_test :
+            while True :
                 prediction , idd = sess.run( [ last_rnn_test , input_tensors_test[2]  ] )
 
                 result = util.human( prediction , idd )
@@ -232,7 +233,7 @@ def train( num_epochs , rep_interval):
                     string_to_file += r
             
             
-                print( "step test:{}/{}".format(i , steps ) )
+                print( "step test, samples:{}/{}".format( i*100 , 75000 ) )
                 i = i +1 
 
         except tf.errors.OutOfRangeError:
@@ -245,7 +246,7 @@ def train( num_epochs , rep_interval):
     
     #init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
 
-    print("train finished.")
+    
 
    
     
@@ -308,7 +309,7 @@ def test( test_file ):
     
 def main( unuser_args):
 
-    train( 20 , REP_INTERVAL)
+    train( 10 , REP_INTERVAL)
 
     #test( "./sub-32000.txt")
     
