@@ -93,7 +93,7 @@ def train( num_epochs , rep_interval):
     #input_data_test = input_manager.DataInstacart( PATH_PRODUCTS ,BATCH_SIZE )
 
     input_data_train = im.InputManager( BATCH_SIZE , PATH_TRAIN_DATA[0] )
-    input_data_test = im.InputManager( 100 , PATH_TEST_DATA[0] , 1 )
+    input_data_test = im.InputManager( BATCH_SIZE , PATH_TEST_DATA[0] , 1 )
 
     iterator_train = input_data_train.data.make_initializable_iterator()
     iterator_test = input_data_test.data.make_initializable_iterator()
@@ -121,7 +121,9 @@ def train( num_epochs , rep_interval):
     tf.add_to_collection('outputs_test', input_tensors_test[2] )
     
     train_loss = util.cost(  last_rnn , input_tensors[1] )
-
+    print("sheips")
+    print( last_rnn.shape )
+    return 
     #eval_loss = input_data.cost_f1( last_rnn , input_tensors[1] )
     
     
