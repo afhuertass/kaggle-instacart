@@ -92,7 +92,7 @@ def train( num_epochs , rep_interval):
     #input_data = input_manager.DataInstacart( PATH_PRODUCTS, BATCH_SIZE  )
     #input_data_test = input_manager.DataInstacart( PATH_PRODUCTS ,BATCH_SIZE )
 
-    input_data_train = im.InputManager( batch_size , PATH_TRAIN_DATA[0] )
+    input_data_train = im.InputManager( BATCH_SIZE , PATH_TRAIN_DATA[0] )
     input_data_test = im.InputManager( 100 , PATH_TEST_DATA[0] , 1 )
 
     interator_train = input_data_train.data.make_initializable_iterator()
