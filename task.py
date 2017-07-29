@@ -14,7 +14,7 @@ import util2 as util
 
 # 49688
 OUTPUT_SIZE = 1
-BATCH_SIZE =  50
+BATCH_SIZE =  128 
 LEN = 150 
 
 
@@ -231,36 +231,10 @@ def train( num_epochs , rep_interval):
             print( "step-training:{}/{}".format( train_iteration, total_steps ) )
             
 
-       
-        i = 1
-        string_to_file="order_id,products\n"
-        
-        try:
-            for i in np.arange(0,steps_test) :
-                prediction , idd = sess.run( [ last_rnn_test , input_tensors_test[2]  ] )
 
-                result = util.human( prediction , idd )
-                for r in result:
-                    string_to_file += r
-            
-            
-                print( "step test, samples:{}/{}".format( i*BATCH_SIZE , 75000 ) )
-                i = i +1 
-
-        except tf.errors.OutOfRangeError:
-            print("Queue dead ")
-            
-        test_file = "sub.txt"
-        test = open(test_file , 'w')
-        test.write( string_to_file )
-        test.close()
+        print("Training finished")
     
     #init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
-
-    
-
-   
-    
 def test( test_file ):
     # restore an generate test file
     string_to_file = "order_id,products\n"
@@ -320,7 +294,7 @@ def test( test_file ):
 
 
 def correct_shapes( inputs_tensors ):
-    input_tensors2 = tuple()
+    
     
     features = tf.reshape( inputs_tensors[0] , [ LEN , BATCH_SIZE , 1] )
     target = tf.reshape( inputs_tensors[1] , [ BATCH_SIZE, 1 ] )
@@ -331,7 +305,7 @@ def correct_shapes( inputs_tensors ):
     
 def main( unuser_args):
 
-    train( 100 , REP_INTERVAL)
+    train( 20000 , REP_INTERVAL)
 
     #test( "./sub-32000.txt")
     
