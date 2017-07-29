@@ -8,12 +8,12 @@ import sys
 
 import dnc
 import input_manager
-import input_manager2 as im
+import input_manager3 as im
 
 import util2 as util
 
 # 49688
-OUTPUT_SIZE = 49690
+OUTPUT_SIZE = 1
 BATCH_SIZE =  50
 LEN = 150 
 
@@ -67,14 +67,14 @@ def run_model2( dnc_core , initial_state  , inputs_sequence , seqlen  , output_s
 
     
     print("wtf men")
-    inputs_sequence = tf.reshape( inputs_sequence , shape=[LEN, BATCH_SIZE , 1] )
+    #inputs_sequence = tf.reshape( inputs_sequence , shape=[LEN, BATCH_SIZE , 1] )
     print( inputs_sequence.shape )
     
     output_sequence , _ = tf.nn.dynamic_rnn(
         cell = dnc_core ,
         inputs = inputs_sequence ,
         sequence_length= seqlen,
-        time_major = True ,
+        time_major = False ,
         initial_state = initial_state 
     )
     
@@ -316,7 +316,7 @@ def test( test_file ):
     
 def main( unuser_args):
 
-    train( 50000 , REP_INTERVAL)
+    train( 100 , REP_INTERVAL)
 
     #test( "./sub-32000.txt")
     
