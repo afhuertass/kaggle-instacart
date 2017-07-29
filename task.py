@@ -23,7 +23,7 @@ PATH_TRAIN_DATA = [ "../data/train.pb2" ]
 PATH_TEST_DATA = ["../data/test_set.pb2" ]
 
 PATH_PRODUCTS = "gs://kaggleun-instacart/data/products/products.csv"
-CHECK_DIR = "../checkpoints-3"
+CHECK_DIR = "../checkpoints-4"
 TB_DIR = "../tensorboard"
 
 
