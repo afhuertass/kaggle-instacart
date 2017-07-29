@@ -66,6 +66,7 @@ class InputManager():
         print(  parsed['feature'].shape ) 
 
         features = tf.reshape( parsed['feature'] , shape =[ 150 , 1 ] )
+        features = tf.cast( features , tf.float32 )
         target = tf.reshape ( parsed['target'] , shape = [] )
         idd = tf.reshape( parsed['ids'] , shape = [] ) 
         seqlen = tf.count_nonzero( features )
