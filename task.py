@@ -67,14 +67,13 @@ def run_model2( dnc_core , initial_state  , inputs_sequence , seqlen  , output_s
 
     
     print("wtf men")
-    #inputs_sequence = tf.reshape( inputs_sequence , shape=[LEN, BATCH_SIZE , 1] )
     print( inputs_sequence.shape )
     
     output_sequence , _ = tf.nn.dynamic_rnn(
         cell = dnc_core ,
         inputs = inputs_sequence ,
         sequence_length= seqlen,
-        time_major = False ,
+        time_major = True ,
         initial_state = initial_state 
     )
     
@@ -98,8 +97,11 @@ def train( num_epochs , rep_interval):
     #input_data_test = input_manager.DataInstacart( PATH_PRODUCTS ,BATCH_SIZE )
 
     input_data_train = im.InputManager( BATCH_SIZE , PATH_TRAIN_DATA[0] )
+   
+    
     input_data_test = im.InputManager( BATCH_SIZE , PATH_TEST_DATA[0] , 1 )
-
+    
+    
     iterator_train = input_data_train.data.make_initializable_iterator()
     iterator_test = input_data_test.data.make_initializable_iterator()
 
@@ -108,8 +110,10 @@ def train( num_epochs , rep_interval):
     #input_tensors_test = input_data_test(PATH_TEST_DATA , 50 )
 
     input_tensors = iterator_train.get_next()
-    input_tensors_test = iterator_test.get_next()
+    input_tensors = correct_shapes( input_tensors )
     
+    input_tensors_test = iterator_test.get_next()
+    input_tensors_test = correct_shapes( input_tensors_test )
     
     output_sequence = run_model2( dnc_core , initial_state , input_tensors[0] , input_tensors[3] , OUTPUT_SIZE  )
 
@@ -313,6 +317,17 @@ def test( test_file ):
 
     test2.write( cc )
     test2.close()
+
+
+def correct_shapes( inputs_tensors ):
+    input_tensors2 = tuple()
+    
+    features = tf.reshape( inputs_tensors[0] , [ LEN , BATCH_SIZE , 1] )
+    target = tf.reshape( inputs_tensors[1] , [ BATCH_SIZE, 1 ] )
+    idd = tf.reshape( inputs_tensors[2] , [ BATCH_SIZE , 1] )
+    
+    return features, target , idd , inputs_tensors[3]
+
     
 def main( unuser_args):
 
