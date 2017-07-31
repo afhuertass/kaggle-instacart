@@ -299,7 +299,7 @@ def train( num_epochs , rep_interval):
                 pred += str(p) + " "
             report += "{},".format(idd)+pred
 
-        fi = open( "./sub.txt" , 'w'):
+        fi = open( "./sub.txt" , 'w')
         fi.write(report)
         fi.close()
         
