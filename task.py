@@ -297,6 +297,8 @@ def train( num_epochs , rep_interval):
                  report += "{},None\n".format(idd)
                  continue
             pred = ""
+            L = set( L )
+            L = list( L ) 
             for p in L:
                 pred += str(p) + " "
             pred += "\n"
