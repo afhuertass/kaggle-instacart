@@ -14,7 +14,7 @@ import util2 as util
 
 # 49688
 OUTPUT_SIZE = 1
-BATCH_SIZE =  5000
+BATCH_SIZE =  1000
 LEN = 150 
 
 
@@ -294,7 +294,7 @@ def train( num_epochs , rep_interval):
                         results[idd] = L
                     indx = indx + 1
                 print("NUMBER OF KEYS:{}".format( len( results.keys() ) ) )
-                if len( results.keys() ) >= 75000:
+                if len( results.keys() ) >= 100:
                     go = False 
                     
                 
