@@ -288,6 +288,8 @@ def train( num_epochs , rep_interval):
 
         except tf.errors.OutOfRangeError:
             print("finished")
+
+            
         report = "order_id,products\n"
         for idd in results:
             L = results[idd]
@@ -297,6 +299,7 @@ def train( num_epochs , rep_interval):
             pred = ""
             for p in L:
                 pred += str(p) + " "
+            pred += "\n"
             report += "{},".format(idd)+pred
 
         fi = open( "./sub.txt" , 'w')
