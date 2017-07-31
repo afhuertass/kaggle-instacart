@@ -298,6 +298,11 @@ def train( num_epochs , rep_interval):
             for p in L:
                 pred += str(p) + " "
             report += "{},".format(idd)+pred
+
+        fi = open( "./sub.txt" , 'w'):
+        fi.write(report)
+        fi.close()
+        
                 
     #init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
 def test( test_file ):
