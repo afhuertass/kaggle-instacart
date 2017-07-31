@@ -242,13 +242,15 @@ def train( num_epochs , rep_interval):
             while go :
                 i = i +1 
                 inputs = sess.run(  input_tensors_test[ 0 ] )
-                print("test:{}".format(i))
+                
                 print( inputs.shape )
                 inputs = np.reshape( inputs ,  ( BATCH_SIZE, LEN  , 1 )  )
                 # inputs [ batch_size , 150, 1]
                 
                 predictions , idds = sess.run( [ last_rnn_test , input_tensors_test[2] ] )
                 predictions = np.reshape( predictions , ( BATCH_SIZE)  )
+
+                print("test:{}".format(i))
                 print("shape predictions")
                 print( predictions.shape )
                 
@@ -257,14 +259,21 @@ def train( num_epochs , rep_interval):
                     if not idd in results:
                         results[idd ] = "None"
 
-                last = []
-                for j in range(0 , inputs.shape[0] ):
-                    tnew = np.array( inputs[j][:][0] )
-                    tnew = np.trim_zeros(tnew )
-                    last.append( int(tnew[-1]) )
+                #last = []
+                #for j in range(0 , inputs.shape[0] ):
+                 #   tnew = np.array( inputs[j][:][0] )
+                  #  tnew = np.trim_zeros(tnew )
+                   # last.append( int(tnew[-1]) )
 
                 # last should be [ batch_size]
-                last = np.array( last )
+                #last = np.array( last )
+                indx_b = inputs.shape[1] - (inputs!=0)[:,::-1].argmax(1) - 1
+                
+                last = inputs[: , indx_b , :]
+                last = np.diagonal( last ).T
+
+                last = np.reshape( last , ( inputs.shape[0] ) )
+                
                 print("last elements shape")
                 print( last.shape )
                 mask = predictions > 0.9
