@@ -248,7 +248,9 @@ def train( num_epochs , rep_interval):
                 # inputs [ batch_size , 150, 1]
                 
                 predictions , idds = sess.run( [ last_rnn_test , input_tensors_test[2] ] )
-
+                print("shape predictions")
+                print( predictions.shape )
+                
                 idds = np.reshape(  idds , ( idds.shape[0] )  )
                 for idd in idds:
                     if not idd in results:
