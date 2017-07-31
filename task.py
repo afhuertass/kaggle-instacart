@@ -14,7 +14,7 @@ import util2 as util
 
 # 49688
 OUTPUT_SIZE = 1
-BATCH_SIZE =  1000
+BATCH_SIZE =  2000
 LEN = 150 
 
 
@@ -312,7 +312,7 @@ def train( num_epochs , rep_interval):
             L = set( L )
             L = list( L ) 
             for p in L:
-                pred += str(p) + " "
+                pred += str(int(p)) + " "
             pred += "\n"
             report += "{},".format(idd)+pred
 
