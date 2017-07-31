@@ -244,7 +244,7 @@ def train( num_epochs , rep_interval):
                 inputs = sess.run(  input_tensors_test[ 0 ] )
                 print("test")
                 print( inputs.shape )
-                inputs = np.reshape( inputs ,  ( LEN , BATCH_SIZE , 1 )  )
+                inputs = np.reshape( inputs ,  ( BATCH_SIZE, LEN  , 1 )  )
                 # inputs [ batch_size , 150, 1]
                 
                 predictions , idds = sess.run( [ last_rnn_test , input_tensors_test[2] ] )
