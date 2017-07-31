@@ -14,7 +14,7 @@ import util2 as util
 
 # 49688
 OUTPUT_SIZE = 1
-BATCH_SIZE =  1000
+BATCH_SIZE =  10000
 LEN = 150 
 
 
@@ -242,7 +242,7 @@ def train( num_epochs , rep_interval):
             while go :
                 i = i +1 
                 inputs = sess.run(  input_tensors_test[ 0 ] )
-                print("test")
+                print("test:{}".format(i))
                 print( inputs.shape )
                 inputs = np.reshape( inputs ,  ( BATCH_SIZE, LEN  , 1 )  )
                 # inputs [ batch_size , 150, 1]
