@@ -267,7 +267,7 @@ def train( num_epochs , rep_interval):
                 last = np.array( last )
                 print("last elements shape")
                 print( last.shape )
-                mask = predictions > 0.5
+                mask = predictions > 0.8
 
                 idds = idds[ mask ]
                 last = last[ mask ]
