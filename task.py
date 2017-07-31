@@ -262,6 +262,8 @@ def train( num_epochs , rep_interval):
 
                 # last should be [ batch_size]
                 last = np.array( last )
+                print("last elements shape")
+                print( last.shape )
                 mask = predictions > 0.5
 
                 idds = idds[ mask ]
