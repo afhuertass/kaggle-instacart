@@ -233,7 +233,59 @@ def train( num_epochs , rep_interval):
 
 
         print("Training finished")
-    
+
+        results = dict()
+        i = 0
+        
+        try:
+            
+            while i < 10 :
+                i = i +1 
+                inputs = sess.run( [ input_tensors_test[ 0 ]] )
+                # inputs [ batch_size , 150, 1]
+                predictions , idds = sess.run( [ last_rnn_test , input_tensors_test[2] ] )
+                for idd in idds:
+                    if not idd in results:
+                        results[idd] = "None"
+
+                last = []
+                for j in range(0 , inputs.shape[0] ):
+                    tnew = np.array( tensors[j][:][0] )
+                    tnew = np.trim_zeros(tnew )
+                    last.append( int(tnew[-1]) )
+
+                # last should be [ batch_size]
+                last = np.array( last )
+                mask = predictions > 0.5
+
+                idds = idds[ mask ]
+                last = last[ mask ]
+
+                for idd in idds:
+
+                    if results[idd] == "None":
+                        L = []
+                        L.append( last[indx] )
+                        results[idd] = L
+                    else:
+                        L = results[idd]
+                        L.append( last[indx])
+                        results[idd] = L
+                        
+
+        except tf.errors.OutOfRangeError:
+            print("finished")
+        report = "order_id,products\n"
+        for idd in results:
+            L = results[idd]
+            if L == "None":
+                 report += "{},None\n".format(idd)
+                continue
+            pred = ""
+            for p in L:
+                pred += str(p) + " "
+            report += "{},".format(idd)+pred
+                
     #init_op = tf.group(tf.global_variables_initializer(), tf.local_variables_initializer())
 def test( test_file ):
     # restore an generate test file
