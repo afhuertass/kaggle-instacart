@@ -242,7 +242,8 @@ def train( num_epochs , rep_interval):
             while i < 10 :
                 i = i +1 
                 inputs = sess.run(  input_tensors_test[ 0 ] )
-                
+                print("test")
+                print( inputs.shape )
                 # inputs [ batch_size , 150, 1]
                 
                 predictions , idds = sess.run( [ last_rnn_test , input_tensors_test[2] ] )
