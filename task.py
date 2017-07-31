@@ -254,7 +254,7 @@ def train( num_epochs , rep_interval):
 
                 last = []
                 for j in range(0 , inputs.shape[0] ):
-                    tnew = np.array( tensors[j][:][0] )
+                    tnew = np.array( inputs[j][:][0] )
                     tnew = np.trim_zeros(tnew )
                     last.append( int(tnew[-1]) )
 
