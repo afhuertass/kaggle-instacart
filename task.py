@@ -14,7 +14,7 @@ import util2 as util
 
 # 49688
 OUTPUT_SIZE = 1
-BATCH_SIZE =  1000
+BATCH_SIZE =  10000
 LEN = 150 
 
 
