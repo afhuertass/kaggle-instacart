@@ -236,10 +236,10 @@ def train( num_epochs , rep_interval):
 
         results = dict()
         i = 0
-        
+        go = True 
         try:
             
-            while i < 10 :
+            while go :
                 i = i +1 
                 inputs = sess.run(  input_tensors_test[ 0 ] )
                 print("test")
@@ -284,8 +284,11 @@ def train( num_epochs , rep_interval):
                         L.append( last[indx])
                         results[idd] = L
                     indx = indx + 1
+                print("NUMBER OF KEYS:{}".format( len( results.keys ) ) )
+                if len( results.keys ) >= 75000:
+                    go = False 
                     
-
+                
         except tf.errors.OutOfRangeError:
             print("finished")
 
