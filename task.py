@@ -280,7 +280,7 @@ def train( num_epochs , rep_interval):
             L = results[idd]
             if L == "None":
                  report += "{},None\n".format(idd)
-                continue
+                 continue
             pred = ""
             for p in L:
                 pred += str(p) + " "
