@@ -284,8 +284,8 @@ def train( num_epochs , rep_interval):
                         L.append( last[indx])
                         results[idd] = L
                     indx = indx + 1
-                print("NUMBER OF KEYS:{}".format( len( results.keys ) ) )
-                if len( results.keys ) >= 75000:
+                print("NUMBER OF KEYS:{}".format( len( results.keys() ) ) )
+                if len( results.keys() ) >= 75000:
                     go = False 
                     
                 
