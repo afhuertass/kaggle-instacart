@@ -272,6 +272,7 @@ def train( num_epochs , rep_interval):
                 idds = idds[ mask ]
                 last = last[ mask ]
 
+                indx = 0
                 for idd in idds:
 
                     if results[idd] == "None":
@@ -282,7 +283,8 @@ def train( num_epochs , rep_interval):
                         L = results[idd]
                         L.append( last[indx])
                         results[idd] = L
-                        
+                    indx = indx + 1
+                    
 
         except tf.errors.OutOfRangeError:
             print("finished")
