@@ -243,10 +243,13 @@ def train( num_epochs , rep_interval):
                 i = i +1 
                 inputs = sess.run( [ input_tensors_test[ 0 ]] )
                 # inputs [ batch_size , 150, 1]
+                
                 predictions , idds = sess.run( [ last_rnn_test , input_tensors_test[2] ] )
+
+                idds = np.reshape(  idds , ( idds.shape[0] )  )
                 for idd in idds:
                     if not idd in results:
-                        results[idd] = "None"
+                        results[idd ] = "None"
 
                 last = []
                 for j in range(0 , inputs.shape[0] ):
