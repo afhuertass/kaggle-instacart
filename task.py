@@ -236,7 +236,8 @@ def train( num_epochs , rep_interval):
 
         results = dict()
         i = 0
-        go = True 
+        go = True
+        C = 11792498
         try:
             
             while go :
@@ -250,7 +251,7 @@ def train( num_epochs , rep_interval):
                 predictions , idds = sess.run( [ last_rnn_test , input_tensors_test[2] ] )
                 predictions = np.reshape( predictions , ( BATCH_SIZE)  )
 
-                print("test:{}".format(i))
+                print("PROCESSED SEQUENCES:{}/{}".format(i*BATCH_SIZE , C ))
                 print("shape predictions")
                 print( predictions.shape )
                 
