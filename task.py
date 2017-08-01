@@ -255,9 +255,7 @@ def train( num_epochs , rep_interval):
                 print( predictions.shape )
                 
                 idds = np.reshape(  idds , ( idds.shape[0] )  )
-                for idd in idds:
-                    if not idd in results:
-                        results[idd ] = "None"
+              
 
                 #last = []
                 #for j in range(0 , inputs.shape[0] ):
@@ -283,7 +281,10 @@ def train( num_epochs , rep_interval):
 
                 indx = 0
                 for idd in idds:
-
+                    
+                    if not idd in results:
+                        results[idd ] = "None"
+                        
                     if results[idd] == "None":
                         L = []
                         L.append( last[indx] )
